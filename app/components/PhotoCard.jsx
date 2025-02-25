@@ -2,7 +2,7 @@
 import Image from "next/image";
 import useIntersection from "./useIntersection";
 
-export default function PhotoCard({ src, onClick }) {
+export default function PhotoCard({ src, onClick, onImageLoad }) {
   const [ref, isVisible] = useIntersection({ threshold: 0.1 });
 
   return (
@@ -17,13 +17,16 @@ export default function PhotoCard({ src, onClick }) {
       <button
         type="button"
         className="block w-full aspect-square overflow-hidden"
-        onClick={onClick} 
+        onClick={onClick}
       >
         <Image
           src={src}
           alt=""
           fill
           className="object-cover"
+          onLoadingComplete={() => {
+            onImageLoad?.();
+          }}
         />
       </button>
     </div>

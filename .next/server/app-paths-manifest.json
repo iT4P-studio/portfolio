@@ -1,11 +1,7 @@
 {
-  "/api/contact/route": "app/api/contact/route.js",
-  "/_not-found/page": "app/_not-found/page.js",
-  "/favicon.ico/route": "app/favicon.ico/route.js",
-  "/about/page": "app/about/page.js",
-  "/contact/page": "app/contact/page.js",
   "/page": "app/page.js",
-  "/movie/page": "app/movie/page.js",
   "/photo/page": "app/photo/page.js",
+  "/favicon.ico/route": "app/favicon.ico/route.js",
+  "/movie/page": "app/movie/page.js",
   "/price/page": "app/price/page.js"
 }

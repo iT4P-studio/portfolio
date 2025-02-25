@@ -1,12 +1,40 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import PhotoCard from "../components/PhotoCard";
 
 export default function PhotoGrid({ images }) {
+  // 合計画像数とロード完了数
+  const totalImages = images.length;
+  const [loadedCount, setLoadedCount] = useState(0);
+
+  // 1枚ロード完了時に呼ばれるコールバック
+  const handleImageLoad = () => {
+    setLoadedCount((prev) => prev + 1);
+  };
+
+  // 進捗率 (0~100)
+  const progress = Math.round((loadedCount / totalImages) * 100);
+
+  // ロード中かどうかを管理するフラグ
+  const [isLoading, setIsLoading] = useState(true);
+
+  // すべての画像が読み込まれ、progress===100 になったら
+  // 0.5秒だけキープしてからロード画面を消す
+  useEffect(() => {
+    if (progress === 100) {
+      const timer = setTimeout(() => {
+        setIsLoading(false);
+      }, 500);
+      return () => clearTimeout(timer);
+    }
+  }, [progress]);
+
+  // --------------------
+  // 既存機能: モーダル表示や外部リンク
+  // --------------------
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedSrc, setSelectedSrc] = useState("");
 
-  // ローカル画像クリック時に拡大表示
   const handleOpenModal = (src) => {
     setSelectedSrc(src);
     setModalOpen(true);
@@ -17,13 +45,36 @@ export default function PhotoGrid({ images }) {
     setModalOpen(false);
   };
 
-  // X画像クリック時にポストURLへ遷移（省略している場合は不要）
   const handleOpenPost = (postUrl) => {
     window.open(postUrl, "_blank");
   };
 
   return (
     <div className="container mx-auto px-4 py-8">
+      {/* -------------------------
+          ロード画面 (Overlay)
+         ------------------------- */}
+      {isLoading && (
+        <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-black">
+          {/* パーセント表示 (フォント適用) */}
+          <span
+            className="text-white text-2xl mb-4"
+            style={{ fontFamily: "'Avenir Next', 'Yu Gothic', sans-serif" }}
+          >
+            {progress}%
+          </span>
+          {/* 白いゲージ枠: width=300px, height=2pxで細長く */}
+          <div className="w-[500px] h-1 bg-white relative overflow-hidden">
+            {/* 中身 (黒バー) */}
+            <div
+              className="absolute left-0 top-0 h-full bg-black transition-all"
+              style={{ width: `${progress}%` }}
+            />
+          </div>
+        </div>
+      )}
+
+      {/* ギャラリー */}
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
         {images.map((item, idx) => {
           // item = { src, isLocal, postUrl? }
@@ -34,6 +85,7 @@ export default function PhotoGrid({ images }) {
                 key={idx}
                 src={item.src}
                 onClick={() => handleOpenModal(item.src)}
+                onImageLoad={handleImageLoad} // 画像1枚読込完了時に呼ぶ
               />
             );
           } else {
@@ -43,13 +95,14 @@ export default function PhotoGrid({ images }) {
                 key={idx}
                 src={item.src}
                 onClick={() => handleOpenPost(item.postUrl)}
+                onImageLoad={handleImageLoad}
               />
             );
           }
         })}
       </div>
 
-      {/* モーダル (ローカル画像のみ) */}
+      {/* 既存: モーダル (ローカル画像のみ) */}
       {modalOpen && (
         <div
           className="
@@ -60,20 +113,14 @@ export default function PhotoGrid({ images }) {
         >
           <div
             className="relative max-w-[90%] max-h-[90%]"
-            onClick={(e) => e.stopPropagation()} 
+            onClick={(e) => e.stopPropagation()}
           >
-            {/* 閉じるボタン */}
             <button
               onClick={handleCloseModal}
               className="absolute top-4 right-4 text-white text-2xl"
             >
               &times;
             </button>
-
-            {/*
-              ここで画像を「画面全体で見切れない程度」に大きく表示。
-              max-w-[90%], max-h-[90%] に加え、object-contain でアスペクト比維持
-            */}
             <img
               src={selectedSrc}
               alt=""
