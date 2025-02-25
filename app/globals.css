@@ -22,3 +22,38 @@ body {
   padding: 0;
 }
 
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* グリッチアニメーション keyframes */
+@keyframes glitchOut {
+  0% {
+    opacity: 1;
+    transform: none;
+  }
+  15% {
+    transform: translate(2px, -2px) skew(0.02deg);
+    clip: rect(44px, 9999px, 56px, 0);
+  }
+  30% {
+    transform: none;
+  }
+  45% {
+    transform: translate(-2px, 2px) skew(0.02deg);
+    clip: rect(85px, 9999px, 140px, 0);
+  }
+  60% {
+    transform: none;
+  }
+  100% {
+    transform: none;
+    opacity: 0;
+  }
+}
+
+/* .glitch-out クラスを付与すると、0.7秒かけてglitch→消滅 */
+.glitch-out {
+  animation: glitchOut 0.7s ease forwards;
+}
+

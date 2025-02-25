@@ -24,9 +24,7 @@ export default function PhotoCard({ src, onClick, onImageLoad }) {
           alt=""
           fill
           className="object-cover"
-          onLoadingComplete={() => {
-            onImageLoad?.();
-          }}
+          onLoadingComplete={() => onImageLoad?.()}
         />
       </button>
     </div>

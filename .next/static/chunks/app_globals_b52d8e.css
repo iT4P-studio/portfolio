@@ -1,4 +1,30 @@
 /* [project]/app/globals.css [app-client] (css) */
+@tailwind base;
+
+@tailwind components;
+
+@tailwind utilities;
+
+:root {
+  --background: #fff;
+  --foreground: #171717;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+  }
+}
+
+body {
+  font-family: Avenir Next, Yu Gothic, sans-serif;
+  background-color: #000;
+  color: #fff;
+  margin: 0;
+  padding: 0;
+}
+
 *, :before, :after {
   --tw-border-spacing-x: 0;
   --tw-border-spacing-y: 0;
@@ -447,6 +473,10 @@ img, video {
   aspect-ratio: 1;
 }
 
+.h-1 {
+  height: .25rem;
+}
+
 .h-6 {
   height: 1.5rem;
 }
@@ -463,14 +493,6 @@ img, video {
   height: .5rem;
 }
 
-.h-3 {
-  height: .75rem;
-}
-
-.h-1 {
-  height: .25rem;
-}
-
 .max-h-\[90\%\] {
   max-height: 90%;
 }
@@ -483,6 +505,10 @@ img, video {
   width: 1.5rem;
 }
 
+.w-\[500px\] {
+  width: 500px;
+}
+
 .w-auto {
   width: auto;
 }
@@ -491,16 +517,8 @@ img, video {
   width: 100%;
 }
 
-.w-64 {
-  width: 16rem;
-}
-
 .w-\[300px\] {
   width: 300px;
-}
-
-.w-\[500px\] {
-  width: 500px;
 }
 
 .max-w-\[90\%\] {
@@ -815,28 +833,46 @@ img, video {
   transition-duration: .7s;
 }
 
+.duration-500 {
+  transition-duration: .5s;
+}
+
 .ease-out {
   transition-timing-function: cubic-bezier(0, 0, .2, 1);
 }
 
-:root {
-  --background: #fff;
-  --foreground: #171717;
-}
+@keyframes glitchOut {
+  0% {
+    opacity: 1;
+    transform: none;
+  }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+  15% {
+    transform: translate(2px, -2px)skew(.02deg);
+    clip: rect(44px, 9999px, 56px, 0);
+  }
+
+  30% {
+    transform: none;
+  }
+
+  45% {
+    transform: translate(-2px, 2px)skew(.02deg);
+    clip: rect(85px, 9999px, 140px, 0);
+  }
+
+  60% {
+    transform: none;
+  }
+
+  100% {
+    transform: none;
+    opacity: 0;
   }
 }
 
-body {
-  font-family: Avenir Next, Yu Gothic, sans-serif;
-  background-color: #000;
-  color: #fff;
-  margin: 0;
-  padding: 0;
+.glitch-out {
+  animation: .7s forwards glitchOut;
 }
 
 .hover\:bg-gray-200:hover {

@@ -85,9 +85,7 @@ function PhotoCard({ src, onClick, onImageLoad }) {
                 alt: "",
                 fill: true,
                 className: "object-cover",
-                onLoadingComplete: ()=>{
-                    onImageLoad?.();
-                }
+                onLoadingComplete: ()=>onImageLoad?.()
             }, void 0, false, {
                 fileName: "[project]/app/components/PhotoCard.jsx",
                 lineNumber: 22,
@@ -134,29 +132,45 @@ var _s = __turbopack_refresh__.signature();
 ;
 function PhotoGrid({ images }) {
     _s();
-    // 合計画像数とロード完了数
+    // 合計画像数・ロード完了数
     const totalImages = images.length;
     const [loadedCount, setLoadedCount] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(0);
-    // 1枚ロード完了時に呼ばれるコールバック
+    // 1枚ロード完了時
     const handleImageLoad = ()=>{
         setLoadedCount((prev)=>prev + 1);
     };
-    // 進捗率 (0~100)
+    // ロード進捗 (0 ~ 100)
     const progress = Math.round(loadedCount / totalImages * 100);
-    // ロード中かどうかを管理するフラグ
+    // ロード画面を表示するかどうか
     const [isLoading, setIsLoading] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(true);
-    // すべての画像が読み込まれ、progress===100 になったら
-    // 1秒だけキープしてからロード画面を消す
-    (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useEffect"])({
+    // フェードアウト開始フラグ
+    const [fadeOut, setFadeOut] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(false);
+    // ロード画面とメインコンテンツのフェード用クラス名
+    const overlayClass = fadeOut ? "opacity-0 transition-opacity duration-500" : "opacity-100";
+    const contentClass = fadeOut ? "opacity-1 transition-opacity duration-500" : "opacity-0";
+    /**
+   * 1) progressが100になったら0.5秒待ってフェードアウト開始 (fadeOut=true)
+   * 2) フェードアウトが終わる0.5秒後に isLoading=false でロード画面をDOMから削除
+   */ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useEffect"])({
         "PhotoGrid.useEffect": ()=>{
             if (progress === 100) {
-                const timer = setTimeout({
-                    "PhotoGrid.useEffect.timer": ()=>{
-                        setIsLoading(false);
+                // 0.5秒後にフェードアウト開始
+                const fadeTimer = setTimeout({
+                    "PhotoGrid.useEffect.fadeTimer": ()=>{
+                        setFadeOut(true);
+                        // さらに0.5秒後にロード画面を削除
+                        const removeTimer = setTimeout({
+                            "PhotoGrid.useEffect.fadeTimer.removeTimer": ()=>{
+                                setIsLoading(false);
+                            }
+                        }["PhotoGrid.useEffect.fadeTimer.removeTimer"], 500);
+                        return ({
+                            "PhotoGrid.useEffect.fadeTimer": ()=>clearTimeout(removeTimer)
+                        })["PhotoGrid.useEffect.fadeTimer"];
                     }
-                }["PhotoGrid.useEffect.timer"], 1000);
+                }["PhotoGrid.useEffect.fadeTimer"], 500);
                 return ({
-                    "PhotoGrid.useEffect": ()=>clearTimeout(timer)
+                    "PhotoGrid.useEffect": ()=>clearTimeout(fadeTimer)
                 })["PhotoGrid.useEffect"];
             }
         }
@@ -183,7 +197,12 @@ function PhotoGrid({ images }) {
         className: "container mx-auto px-4 py-8",
         children: [
             isLoading && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                className: "fixed inset-0 z-50 flex flex-col items-center justify-center bg-black",
+                className: `
+            fixed inset-0 z-50
+            flex flex-col items-center justify-center
+            bg-black
+            ${overlayClass}
+          `,
                 children: [
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                         className: "text-white text-2xl mb-4",
@@ -196,7 +215,7 @@ function PhotoGrid({ images }) {
                         ]
                     }, void 0, true, {
                         fileName: "[project]/app/photo/PhotoGrid.jsx",
-                        lineNumber: 60,
+                        lineNumber: 90,
                         columnNumber: 11
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -208,51 +227,58 @@ function PhotoGrid({ images }) {
                             }
                         }, void 0, false, {
                             fileName: "[project]/app/photo/PhotoGrid.jsx",
-                            lineNumber: 69,
+                            lineNumber: 98,
                             columnNumber: 13
                         }, this)
                     }, void 0, false, {
                         fileName: "[project]/app/photo/PhotoGrid.jsx",
-                        lineNumber: 67,
+                        lineNumber: 97,
                         columnNumber: 11
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/app/photo/PhotoGrid.jsx",
-                lineNumber: 58,
+                lineNumber: 81,
                 columnNumber: 9
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                className: "grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4",
-                children: images.map((item, idx)=>{
-                    // item = { src, isLocal, postUrl? }
-                    if (item.isLocal) {
-                        // ローカル画像: クリック → モーダル拡大
-                        return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$app$2f$components$2f$PhotoCard$2e$jsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {
-                            src: item.src,
-                            onClick: ()=>handleOpenModal(item.src),
-                            onImageLoad: handleImageLoad
-                        }, idx, false, {
-                            fileName: "[project]/app/photo/PhotoGrid.jsx",
-                            lineNumber: 84,
-                            columnNumber: 15
-                        }, this);
-                    } else {
-                        // X画像: クリック → 投稿URLへ
-                        return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$app$2f$components$2f$PhotoCard$2e$jsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {
-                            src: item.src,
-                            onClick: ()=>handleOpenPost(item.postUrl),
-                            onImageLoad: handleImageLoad
-                        }, idx, false, {
-                            fileName: "[project]/app/photo/PhotoGrid.jsx",
-                            lineNumber: 94,
-                            columnNumber: 15
-                        }, this);
-                    }
-                })
+                className: `${contentClass}`,
+                children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                    className: "grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4",
+                    children: images.map((item, idx)=>{
+                        // item = { src, isLocal, postUrl? }
+                        if (item.isLocal) {
+                            // ローカル画像: クリック → モーダル拡大
+                            return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$app$2f$components$2f$PhotoCard$2e$jsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {
+                                src: item.src,
+                                onClick: ()=>handleOpenModal(item.src),
+                                onImageLoad: handleImageLoad
+                            }, idx, false, {
+                                fileName: "[project]/app/photo/PhotoGrid.jsx",
+                                lineNumber: 117,
+                                columnNumber: 17
+                            }, this);
+                        } else {
+                            // X画像: クリック → 投稿URLへ
+                            return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$app$2f$components$2f$PhotoCard$2e$jsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {
+                                src: item.src,
+                                onClick: ()=>handleOpenPost(item.postUrl),
+                                onImageLoad: handleImageLoad
+                            }, idx, false, {
+                                fileName: "[project]/app/photo/PhotoGrid.jsx",
+                                lineNumber: 127,
+                                columnNumber: 17
+                            }, this);
+                        }
+                    })
+                }, void 0, false, {
+                    fileName: "[project]/app/photo/PhotoGrid.jsx",
+                    lineNumber: 111,
+                    columnNumber: 9
+                }, this)
             }, void 0, false, {
                 fileName: "[project]/app/photo/PhotoGrid.jsx",
-                lineNumber: 78,
+                lineNumber: 110,
                 columnNumber: 7
             }, this),
             modalOpen && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -268,7 +294,7 @@ function PhotoGrid({ images }) {
                             children: "×"
                         }, void 0, false, {
                             fileName: "[project]/app/photo/PhotoGrid.jsx",
-                            lineNumber: 118,
+                            lineNumber: 152,
                             columnNumber: 13
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("img", {
@@ -276,33 +302,33 @@ function PhotoGrid({ images }) {
                             alt: "",
                             className: "w-full h-full object-contain",
                             style: {
-                                maxHeight: '90vh',
-                                maxWidth: '90vw'
+                                maxHeight: "90vh",
+                                maxWidth: "90vw"
                             }
                         }, void 0, false, {
                             fileName: "[project]/app/photo/PhotoGrid.jsx",
-                            lineNumber: 124,
+                            lineNumber: 158,
                             columnNumber: 13
                         }, this)
                     ]
                 }, void 0, true, {
                     fileName: "[project]/app/photo/PhotoGrid.jsx",
-                    lineNumber: 114,
+                    lineNumber: 148,
                     columnNumber: 11
                 }, this)
             }, void 0, false, {
                 fileName: "[project]/app/photo/PhotoGrid.jsx",
-                lineNumber: 107,
+                lineNumber: 141,
                 columnNumber: 9
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/app/photo/PhotoGrid.jsx",
-        lineNumber: 53,
+        lineNumber: 74,
         columnNumber: 5
     }, this);
 }
-_s(PhotoGrid, "2/aS7sYNHJuIdYn1D1u0QOBAlDY=");
+_s(PhotoGrid, "vBxwbt4rv8ZVcS9RJXf66qgpZC4=");
 _c = PhotoGrid;
 var _c;
 __turbopack_refresh__.register(_c, "PhotoGrid");
