@@ -200,9 +200,9 @@ function PhotoGrid({ images }) {
                         columnNumber: 11
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                        className: "w-[500px] h-1 bg-white relative overflow-hidden",
+                        className: "w-[500px] h-1 bg-black relative overflow-hidden",
                         children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                            className: "absolute left-0 top-0 h-full bg-black transition-all",
+                            className: "absolute left-0 top-0 h-full bg-white transition-all",
                             style: {
                                 width: `${progress}%`
                             }

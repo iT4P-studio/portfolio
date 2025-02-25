@@ -64,10 +64,10 @@ export default function PhotoGrid({ images }) {
             {progress}%
           </span>
           {/* 白いゲージ枠: width=300px, height=2pxで細長く */}
-          <div className="w-[500px] h-1 bg-white relative overflow-hidden">
+          <div className="w-[500px] h-1 bg-black relative overflow-hidden">
             {/* 中身 (黒バー) */}
             <div
-              className="absolute left-0 top-0 h-full bg-black transition-all"
+              className="absolute left-0 top-0 h-full bg-white transition-all"
               style={{ width: `${progress}%` }}
             />
           </div>
