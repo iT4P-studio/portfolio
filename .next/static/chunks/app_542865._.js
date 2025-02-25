@@ -146,7 +146,7 @@ function PhotoGrid({ images }) {
     // ロード中かどうかを管理するフラグ
     const [isLoading, setIsLoading] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(true);
     // すべての画像が読み込まれ、progress===100 になったら
-    // 0.5秒だけキープしてからロード画面を消す
+    // 1秒だけキープしてからロード画面を消す
     (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useEffect"])({
         "PhotoGrid.useEffect": ()=>{
             if (progress === 100) {
@@ -154,7 +154,7 @@ function PhotoGrid({ images }) {
                     "PhotoGrid.useEffect.timer": ()=>{
                         setIsLoading(false);
                     }
-                }["PhotoGrid.useEffect.timer"], 500);
+                }["PhotoGrid.useEffect.timer"], 1000);
                 return ({
                     "PhotoGrid.useEffect": ()=>clearTimeout(timer)
                 })["PhotoGrid.useEffect"];

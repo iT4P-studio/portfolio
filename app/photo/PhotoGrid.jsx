@@ -19,12 +19,12 @@ export default function PhotoGrid({ images }) {
   const [isLoading, setIsLoading] = useState(true);
 
   // すべての画像が読み込まれ、progress===100 になったら
-  // 0.5秒だけキープしてからロード画面を消す
+  // 1秒だけキープしてからロード画面を消す
   useEffect(() => {
     if (progress === 100) {
       const timer = setTimeout(() => {
         setIsLoading(false);
-      }, 500);
+      }, 1000);
       return () => clearTimeout(timer);
     }
   }, [progress]);
