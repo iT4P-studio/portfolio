@@ -45,7 +45,7 @@ export default function PricePage() {
         {plans.map((plan, idx) => (
           <div
             key={idx}
-            className="rounded-lg bg-stone-700 p-6 flex flex-col items-start"
+            className="rounded-lg bg-zinc-900 p-6 flex flex-col items-start"
           >
             <h2 className="text-3xl text-white mb-2">
               {plan.title}
