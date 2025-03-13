@@ -19,3 +19,7 @@ yarn-error.log*
 # Editor directories
 .vscode/
 .idea/
+
+#other
+.DS_Store*
+public/.DS_Store
