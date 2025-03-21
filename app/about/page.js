@@ -5,8 +5,11 @@ import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
 
 export default function AboutPage() {
+  // 4セクション: 0=経歴, 1=撮影歴, 2=所有機材, 3=Links
   const [sectionIndex, setSectionIndex] = useState(0);
   const TOTAL_SECTIONS = 4;
+
+  // 1回のスクロールあたり1セクションのみ移動するロック
   const [wheelLock, setWheelLock] = useState(false);
 
   const goNext = useCallback(() => {
@@ -21,12 +24,16 @@ export default function AboutPage() {
       e.preventDefault();
       if (wheelLock) return;
 
+      // 下方向( deltaY>0 ) => 次へ
       if (e.deltaY > 0) {
         goNext();
-      } else if (e.deltaY < 0) {
+      } 
+      // 上方向( deltaY<0 ) => 前へ
+      else if (e.deltaY < 0) {
         goPrev();
       }
       setWheelLock(true);
+      // 1秒後にロック解除
       setTimeout(() => {
         setWheelLock(false);
       }, 1000);
@@ -38,10 +45,11 @@ export default function AboutPage() {
     };
   }, [wheelLock, goNext, goPrev]);
 
+  // 4つのセクションを配列化
   const sections = [
     <CareerSection key="career" />,
     <HistorySection key="history" />,
-    <EquipmentSection key="equip" />, // 中央揃え
+    <EquipmentSection key="equip" />,
     <LinksSection key="links" />,
   ];
 
@@ -53,6 +61,8 @@ export default function AboutPage() {
         height: "calc(100vh - 60px)",
         marginTop: "60px",
         overflow: "hidden",
+        // このページだけ明朝体で統一
+        fontFamily: "serif",
       }}
     >
       <AnimatePresence mode="wait">
@@ -68,24 +78,43 @@ export default function AboutPage() {
         </motion.div>
       </AnimatePresence>
 
-      {/* 右側インジケータ */}
-      <div className="absolute right-4 top-1/2 -translate-y-1/2 flex flex-col space-y-4 items-center">
-        {[0, 1, 2, 3].map((idx) => (
-          <div
-            key={idx}
-            className={`
-              w-3 h-12 border border-white cursor-pointer
-              ${sectionIndex === idx ? "bg-white" : "bg-black"}
-            `}
-            onClick={() => setSectionIndex(idx)}
-          />
-        ))}
+      {/* 右側: タイトル + 四角形を縦に並べる */}
+      <div className="absolute right-4 top-1/2 -translate-y-1/2 flex flex-col space-y-4 items-end">
+        {/* タイトル配列とセクションidxを揃える */}
+        {["経歴", "撮影歴", "所有機材", "Links"].map((title, idx) => {
+          const isActive = sectionIndex === idx;
+          return (
+            <div
+              key={idx}
+              className="flex items-center cursor-pointer"
+              onClick={() => setSectionIndex(idx)}
+            >
+              {/* タイトル部分: 非アクティブはグレー, アクティブは白 */}
+              <span
+                className={
+                  isActive
+                    ? "mr-2 text-white"
+                    : "mr-2 text-gray-400"
+                }
+              >
+                {title}
+              </span>
+
+              {/* 四角形 */}
+              <div
+                className={`w-3 h-12 border border-white ${
+                  isActive ? "bg-white" : "bg-black"
+                }`}
+              />
+            </div>
+          );
+        })}
       </div>
     </div>
   );
 }
 
-// ====== 各セクション ======
+// ------------------- 各セクション -------------------
 
 function CareerSection() {
   const careerData = [
@@ -95,7 +124,6 @@ function CareerSection() {
   ];
   return (
     <div className="p-4">
-      {/* 見出しのみ中央 */}
       <h2 className="text-4xl font-bold mb-6 text-center">経歴</h2>
       <table className="mx-auto w-[600px] text-lg">
         <tbody>
@@ -137,22 +165,24 @@ function HistorySection() {
 }
 
 function EquipmentSection() {
-  // 所有機材だけ全体を中央揃え
   const categories = [
-    { category: "カメラ", items: ["Nikon Z9", "Nikon Z8"] },
-    { category: "レンズ", items: ["Z24-70mm F4", "Z70-200mm F2.8/S", "Z50mm f1.2/S"] },
+    { category: "カメラ", items: ["Nikon Z9", "Nikon Z8", "Nikon Z6"] },
+    {
+      category: "レンズ",
+      items: ["Z24-70mm F4", "Z70-200mm F2.8/S", "Z50mm f1.2/S", "Z 26/2.8", "Z テレコンバーター TC-2.0x", "AF-S FI 8-15/3.5-4.5E"],
+    },
+    { category: "自動車", items: ["GR86"] },
   ];
   return (
-    <div className="p-4 text-center">
-      <h2 className="text-4xl font-bold mb-6">所有機材</h2>
-      {/* カテゴリやアイテムもすべて中央 */}
+    <div className="p-4">
+      <h2 className="text-4xl font-bold mb-6 text-center">所有機材</h2>
       {categories.map((cat, i) => (
         <div key={i} className="mb-6 text-lg">
-          <h4 className="text-xl font-semibold mb-1 whitespace-nowrap">
+          <h4 className="text-2xl font-semibold mb-2 whitespace-nowrap text-center">
             {cat.category}
           </h4>
           {cat.items.map((item, j) => (
-            <p key={j} className="whitespace-nowrap">{item}</p>
+            <p key={j} className="whitespace-nowrap text-center">{item}</p>
           ))}
         </div>
       ))}
@@ -186,12 +216,7 @@ function LinksSection() {
             rel="noopener noreferrer"
             className="hover:opacity-80 transition"
           >
-            <Image
-              src={lk.icon}
-              alt={lk.alt}
-              width={64}
-              height={64}
-            />
+            <Image src={lk.icon} alt={lk.alt} width={64} height={64} />
           </a>
         ))}
       </div>
