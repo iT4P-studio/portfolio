@@ -1,109 +1,108 @@
 "use client";
 
+import React, { useState, useEffect, useCallback } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
-import React from "react";
 
-/**
- * このページの構造:
- *  - 親div: relative, total height = 400vh 分
- *    - 左カラム: sticky (top: 0), 高さ100vh
- *    - 右カラム: (経歴/撮影歴/所有機材) 各100vh × 3 = 300vh
- *    - その下に 2段目 (SNSアイコンなど) 100vh
- */
 export default function AboutPage() {
-  // 2段目アイコン例
-  const friendLinks = [
-    {
-      href: "https://friend1-site.example.com",
-      icon: "/images/icons/friend1.png",
-      alt: "Friend1",
-    },
-    {
-      href: "https://twitter.com/friend2",
-      icon: "/images/icons/friend2.png",
-      alt: "Friend2 Twitter",
-    },
-    // さらに追加
+  const [sectionIndex, setSectionIndex] = useState(0);
+  const TOTAL_SECTIONS = 4;
+  const [wheelLock, setWheelLock] = useState(false);
+
+  const goNext = useCallback(() => {
+    setSectionIndex((prev) => (prev < TOTAL_SECTIONS - 1 ? prev + 1 : prev));
+  }, []);
+  const goPrev = useCallback(() => {
+    setSectionIndex((prev) => (prev > 0 ? prev - 1 : prev));
+  }, []);
+
+  useEffect(() => {
+    const handleWheelEvent = (e) => {
+      e.preventDefault();
+      if (wheelLock) return;
+
+      if (e.deltaY > 0) {
+        goNext();
+      } else if (e.deltaY < 0) {
+        goPrev();
+      }
+      setWheelLock(true);
+      setTimeout(() => {
+        setWheelLock(false);
+      }, 1000);
+    };
+
+    window.addEventListener("wheel", handleWheelEvent, { passive: false });
+    return () => {
+      window.removeEventListener("wheel", handleWheelEvent);
+    };
+  }, [wheelLock, goNext, goPrev]);
+
+  const sections = [
+    <CareerSection key="career" />,
+    <HistorySection key="history" />,
+    <EquipmentSection key="equip" />, // 中央揃え
+    <LinksSection key="links" />,
   ];
 
   return (
-    <div className="w-full relative">
-      {/* 親ラッパ: height=400vh 分スクロールできる */}
-      <div className="relative w-full h-[400vh]">
+    <div
+      className="relative bg-black text-white"
+      style={{
+        width: "100vw",
+        height: "calc(100vh - 60px)",
+        marginTop: "60px",
+        overflow: "hidden",
+      }}
+    >
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={sectionIndex}
+          className="absolute inset-0 flex items-start justify-center pt-10"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.7 }}
+        >
+          {sections[sectionIndex]}
+        </motion.div>
+      </AnimatePresence>
 
-        {/* 左写真 (sticky) */}
-        <div className="sticky top-0 w-1/2 h-screen float-left overflow-hidden">
-          {/* 写真: public/images/me.jpg に配置しておく */}
-          <Image
-            src="/images/me.jpg"
-            alt="Me"
-            fill
-            className="object-cover"
+      {/* 右側インジケータ */}
+      <div className="absolute right-4 top-1/2 -translate-y-1/2 flex flex-col space-y-4 items-center">
+        {[0, 1, 2, 3].map((idx) => (
+          <div
+            key={idx}
+            className={`
+              w-3 h-12 border border-white cursor-pointer
+              ${sectionIndex === idx ? "bg-white" : "bg-black"}
+            `}
+            onClick={() => setSectionIndex(idx)}
           />
-        </div>
-
-        {/* 右カラム: 3つのセクション + 2段目(アイコン) */}
-        <div className="float-left w-1/2 bg-neutral-900">
-          {/* 1. 経歴 */}
-          <section className="h-screen flex items-center justify-center">
-            <CareerSection />
-          </section>
-
-          {/* 2. 撮影歴 */}
-          <section className="h-screen flex items-center justify-center">
-            <HistorySection />
-          </section>
-
-          {/* 3. 所有機材 */}
-          <section className="h-screen flex items-center justify-center">
-            <EquipmentSection />
-          </section>
-
-          {/* 2段目: SNSリンク等 */}
-          <section className="h-screen flex flex-col items-center justify-center bg-black">
-            <h2 className="mb-8 text-xl font-bold">Friends / SNS</h2>
-            <div className="flex space-x-6">
-              {friendLinks.map((link, idx) => (
-                <a
-                  key={idx}
-                  href={link.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="block"
-                >
-                  <Image
-                    src={link.icon}
-                    alt={link.alt}
-                    width={64}
-                    height={64}
-                    className="hover:opacity-70 transition"
-                  />
-                </a>
-              ))}
-            </div>
-          </section>
-        </div>
+        ))}
       </div>
     </div>
   );
 }
 
-/** 経歴 (テーブル例) */
+// ====== 各セクション ======
+
 function CareerSection() {
   const careerData = [
-    ["2020年4月", "○○大学 入学"],
-    ["2023年3月", "○○大学 卒業"],
-    ["2023年4月", "フリーランスとして活動開始"],
+    ["2022/3", "広尾学園高等学校 医進・サイエンスコース 卒業"],
+    ["2023/4", "iT4P studio 開業"],
+    ["2026/3", "筑波大学 情報学群 知識情報・図書館学類 卒業（見込み）"],
   ];
   return (
-    <div className="text-white p-4 w-[300px]">
-      <h3 className="text-2xl font-bold mb-4">経歴</h3>
-      <table className="w-full">
+    <div className="p-4">
+      {/* 見出しのみ中央 */}
+      <h2 className="text-4xl font-bold mb-6 text-center">経歴</h2>
+      <table className="mx-auto w-[600px] text-lg">
         <tbody>
           {careerData.map(([time, event], i) => (
             <tr key={i} className="border-b border-gray-600">
-              <td className="pr-4 py-2 text-sm">{time}</td>
-              <td className="py-2 text-sm">{event}</td>
+              <td className="py-2 pr-4 whitespace-nowrap text-left">{time}</td>
+              <td className="py-2 whitespace-nowrap text-left">{event}</td>
             </tr>
           ))}
         </tbody>
@@ -112,22 +111,23 @@ function CareerSection() {
   );
 }
 
-/** 撮影歴 (テーブル例) */
 function HistorySection() {
   const historyData = [
-    ["スポーツ写真", "3年"],
-    ["舞台・ステージ撮影", "2年"],
-    ["イベント撮影", "1年"],
+    ["東京マラソン", "2023〜25"],
+    ["S.V.League", "2024〜"],
+    ["スポーツ撮影・配信", ""],
+    ["イベント撮影・配信", ""],
+    ["スクール撮影・配信", ""],
   ];
   return (
-    <div className="text-white p-4 w-[300px]">
-      <h3 className="text-2xl font-bold mb-4">撮影歴</h3>
-      <table className="w-full">
+    <div className="p-4">
+      <h2 className="text-4xl font-bold mb-6 text-center">撮影歴</h2>
+      <table className="mx-auto w-[600px] text-lg">
         <tbody>
           {historyData.map(([subject, period], i) => (
             <tr key={i} className="border-b border-gray-600">
-              <td className="pr-4 py-2 text-sm">{subject}</td>
-              <td className="py-2 text-sm">{period}</td>
+              <td className="py-2 pr-4 whitespace-nowrap text-left">{subject}</td>
+              <td className="py-2 whitespace-nowrap text-left">{period}</td>
             </tr>
           ))}
         </tbody>
@@ -136,31 +136,65 @@ function HistorySection() {
   );
 }
 
-/** 所有機材 */
 function EquipmentSection() {
-  // 所有機材をカテゴリ分け
+  // 所有機材だけ全体を中央揃え
   const categories = [
+    { category: "カメラ", items: ["Nikon Z9", "Nikon Z8"] },
+    { category: "レンズ", items: ["Z24-70mm F4", "Z70-200mm F2.8/S", "Z50mm f1.2/S"] },
+  ];
+  return (
+    <div className="p-4 text-center">
+      <h2 className="text-4xl font-bold mb-6">所有機材</h2>
+      {/* カテゴリやアイテムもすべて中央 */}
+      {categories.map((cat, i) => (
+        <div key={i} className="mb-6 text-lg">
+          <h4 className="text-xl font-semibold mb-1 whitespace-nowrap">
+            {cat.category}
+          </h4>
+          {cat.items.map((item, j) => (
+            <p key={j} className="whitespace-nowrap">{item}</p>
+          ))}
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function LinksSection() {
+  const iconLinks = [
     {
-      category: "カメラ",
-      items: ["Canon EOS R5", "Sony α7IV"],
+      href: "https://xn--19ja1fb.xn--q9jyb4c/#home",
+      icon: "/images/icons/friend1.png",
+      alt: "Friend1",
     },
     {
-      category: "レンズ",
-      items: ["EF 24-70mm F2.8", "EF 70-200mm F2.8"],
+      href: "https://iorin.io/",
+      icon: "/images/icons/friend2.png",
+      alt: "Friend2",
     },
   ];
 
   return (
-    <div className="text-white p-4 w-[300px]">
-      <h3 className="text-2xl font-bold mb-4">所有機材</h3>
-      {categories.map((cat, i) => (
-        <div key={i} className="mb-4">
-          <h4 className="text-lg font-semibold mb-1">{cat.category}</h4>
-          {cat.items.map((item, j) => (
-            <p key={j} className="ml-4 text-sm">{item}</p>
-          ))}
-        </div>
-      ))}
+    <div className="p-4">
+      <h2 className="text-4xl font-bold mb-6 text-center">Links</h2>
+      <div className="flex gap-8 justify-center items-center">
+        {iconLinks.map((lk, i) => (
+          <a
+            key={i}
+            href={lk.href}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hover:opacity-80 transition"
+          >
+            <Image
+              src={lk.icon}
+              alt={lk.alt}
+              width={64}
+              height={64}
+            />
+          </a>
+        ))}
+      </div>
     </div>
   );
 }
