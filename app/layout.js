@@ -3,7 +3,7 @@ import React from 'react'
 import Header from './components/Header'
 
 export const metadata = {
-  title: 'My Portfolio',
+  title: 'iT4P studio',
   description: 'A modern portfolio site using Next.js',
 }
 
