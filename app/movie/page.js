@@ -34,11 +34,32 @@ export default function MovieWorksPage() {
       caption: "ディレクション・撮影・SW・配信管理を担当"
     },
     {
+      date: "2024/08/03",
+      title: "スポーツイベント 収録",
+      type: "image",
+      embedUrl: "/images/mw/mw6.JPG", 
+      caption: "ディレクション・撮影・SWを担当"
+    },
+    {
+      date: "2024/06/06",
+      title: "スポーツイベント 収録",
+      type: "image",
+      embedUrl: "/images/mw/mw7.JPG", 
+      caption: "ディレクション・撮影・SWを担当"
+    },
+    {
       date: "2024/03/18",
       title: "ダンス公演 収録",
       type: "image",
       embedUrl: "/images/mw/mw4.JPG", 
       caption: "ディレクション・撮影・SW・編集を担当"
+    },
+    {
+      date: "2024/01/14",
+      title: "空手道場 演武会 収録",
+      type: "image",
+      embedUrl: "/images/mw/mw5.JPG", 
+      caption: "撮影・編集を担当"
     },
     {
       date: "2022/11/05",
