@@ -4,56 +4,57 @@ import React from "react";
 
 /**
  * MovieWorksページ
- * - ある程度幅が狭い場合は1列表示にし、幅が lg(1024px) 以上あれば2列
- * - タイトルが2行にならないように whitespace-nowrap + overflow-hidden + text-ellipsis
- * - キャプションが枠外に飛び出さない程度にカード幅を調整
+ * - 幅が狭いと1列, lg以上で2列
+ * - 日付を「タイトルの上」に表示 (小文字)
+ * - タイトルは1行に収める (whitespace-nowrap)
  */
 
 export default function MovieWorksPage() {
-  // タイトル + 埋め込み(動画/画像) + caption
+  // タイトル + 日付 + 埋め込み(動画/画像) + caption
   const items = [
     {
+      date: "2023/09/12",
       title: "第49回雙峰祭ダイジェスト【筑波大学学園祭】",
       type: "video",
       embedUrl: "https://www.youtube.com/embed/P9fxQRrqruE?si=BnHQEcHvkJzbSXzq",
       caption: "撮影・CG・アニメーションを担当"
     },
     {
+      date: "2023/08/20",
       title: "医療関連施設 紹介動画制作",
       type: "image",
       embedUrl: "/images/mw/mw1.JPG", 
       caption: "構成・撮影・音響・編集を担当"
     },
     {
+      date: "2023/07/05",
       title: "ダンス公演 収録",
       type: "image",
       embedUrl: "/images/mw/mw2.JPG", 
       caption: "ディレクション・撮影・SW・編集を担当"
     },
     {
-      title: "アカペラ公演 収録",
+      date: "2023/05/15",
+      title: "アカペラ公演 配信・収録",
       type: "image",
       embedUrl: "/images/mw/mw3.JPG", 
-      caption: "ディレクション・撮影・SW・編集を担当"
+      caption: "ディレクション・撮影・SW・配信管理を担当"
     },
-    // さらに必要なら追加
   ];
 
   return (
     <div className="container mx-auto px-4 py-8 text-white">
       <h1 className="text-3xl font-bold mb-6">Movie Works</h1>
       <p className="mb-4">
-        
+        {/* 説明があれば */}
       </p>
 
-      {/* 
-        グリッド:
-         1列 → lg(1024px)以上で2列 
-      */}
+      {/* 1列 → lg(1024px)以上で2列 */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         {items.map((item, idx) => (
           <MediaItem
             key={idx}
+            date={item.date}
             title={item.title}
             type={item.type}
             embedUrl={item.embedUrl}
@@ -65,27 +66,32 @@ export default function MovieWorksPage() {
   );
 }
 
-/** 各作品カード: 「タイトル(1行) + [左:小さい動画or画像][右:キャプション]」 */
-function MediaItem({ title, type, embedUrl, caption }) {
+/** 各作品カード: 日付(小文字) + タイトル(1行) + [左: 埋め込み, 右: キャプション] */
+function MediaItem({ date, title, type, embedUrl, caption }) {
   return (
     <div className="bg-black border border-gray-600 p-4 rounded-lg">
-      {/* タイトル(1行に収める) */}
+      {/* 日付をタイトルの上に表示 (小文字) */}
+      <div className="text-sm text-gray-400 mb-1 whitespace-nowrap overflow-hidden text-ellipsis">
+        {date}
+      </div>
+
+      {/* タイトル(1行) */}
       <h2
         className="
-          text-2xl font-semibold mb-2 
-          block max-w-full 
+          text-2xl font-semibold
+          block max-w-full
           whitespace-nowrap 
           overflow-hidden 
           text-ellipsis
+          mb-2
         "
-        style={{ lineHeight: "1.2" }} /* 文字ぎゅっと詰めるなら */
+        style={{ lineHeight: "1.2" }}
       >
         {title}
       </h2>
 
       {/* 左: メディア(幅300×高さ169) + 右: キャプション */}
       <div className="flex flex-col sm:flex-row items-start gap-4">
-        {/* メディア枠 */}
         <div className="w-[300px] h-[169px] relative overflow-hidden rounded-lg shrink-0">
           {type === "video" ? (
             <VideoEmbed embedUrl={embedUrl} title={title} />
@@ -93,7 +99,6 @@ function MediaItem({ title, type, embedUrl, caption }) {
             <ImageEmbed imageUrl={embedUrl} title={title} />
           )}
         </div>
-        {/* キャプション */}
         <div className="flex-1">
           <p className="text-gray-200 text-sm sm:text-base leading-relaxed">
             {caption}
@@ -104,7 +109,7 @@ function MediaItem({ title, type, embedUrl, caption }) {
   );
 }
 
-/** 動画埋め込み(iframe) */
+/** 動画埋め込み(iframe) - 300×169 */
 function VideoEmbed({ embedUrl, title }) {
   return (
     <iframe
@@ -118,7 +123,7 @@ function VideoEmbed({ embedUrl, title }) {
   );
 }
 
-/** 画像埋め込み */
+/** 画像埋め込み - 300×169 */
 function ImageEmbed({ imageUrl, title }) {
   return (
     <img
