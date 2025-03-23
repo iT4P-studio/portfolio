@@ -13,32 +13,39 @@ export default function MovieWorksPage() {
   // タイトル + 日付 + 埋め込み(動画/画像) + caption
   const items = [
     {
-      date: "2023/09/12",
-      title: "第49回雙峰祭ダイジェスト【筑波大学学園祭】",
-      type: "video",
-      embedUrl: "https://www.youtube.com/embed/P9fxQRrqruE?si=BnHQEcHvkJzbSXzq",
-      caption: "撮影・CG・アニメーションを担当"
-    },
-    {
-      date: "2023/08/20",
-      title: "医療関連施設 紹介動画制作",
-      type: "image",
-      embedUrl: "/images/mw/mw1.JPG", 
-      caption: "構成・撮影・音響・編集を担当"
-    },
-    {
-      date: "2023/07/05",
+      date: "2025/03/19",
       title: "ダンス公演 収録",
       type: "image",
       embedUrl: "/images/mw/mw2.JPG", 
       caption: "ディレクション・撮影・SW・編集を担当"
     },
     {
-      date: "2023/05/15",
+      date: "2025/02",
+      title: "医療関連施設 紹介動画制作",
+      type: "image",
+      embedUrl: "/images/mw/mw1.JPG", 
+      caption: "構成・撮影・音響・編集を担当"
+    },
+    {
+      date: "2024/09/14",
       title: "アカペラ公演 配信・収録",
       type: "image",
       embedUrl: "/images/mw/mw3.JPG", 
       caption: "ディレクション・撮影・SW・配信管理を担当"
+    },
+    {
+      date: "2024/03/18",
+      title: "ダンス公演 収録",
+      type: "image",
+      embedUrl: "/images/mw/mw4.JPG", 
+      caption: "ディレクション・撮影・SW・編集を担当"
+    },
+    {
+      date: "2022/11/05",
+      title: "第49回雙峰祭ダイジェスト【筑波大学学園祭】",
+      type: "video",
+      embedUrl: "https://www.youtube.com/embed/P9fxQRrqruE?si=BnHQEcHvkJzbSXzq",
+      caption: "撮影・CG・アニメーションを担当"
     },
   ];
 
@@ -46,7 +53,7 @@ export default function MovieWorksPage() {
     <div className="container mx-auto px-4 py-8 text-white">
       <h1 className="text-3xl font-bold mb-6">Movie Works</h1>
       <p className="mb-4">
-        {/* 説明があれば */}
+        {"本ページではクライアント様より直接ご依頼をいただいた案件のみを掲載しております。"}
       </p>
 
       {/* 1列 → lg(1024px)以上で2列 */}
