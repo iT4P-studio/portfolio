@@ -3,6 +3,11 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
+import ReactGA from "react-ga4";
+// Google Analytics 測定 ID を入力して設定
+ReactGA.initialize("G-GVJZVJ676G");
+// ページビューイベントを処理
+ReactGA.send("pageview");
 
 export default function AboutPage() {
   // 4セクション: 0=経歴, 1=撮影歴, 2=所有機材, 3=Links
