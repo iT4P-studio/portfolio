@@ -10,8 +10,10 @@
     "export": "next export"
   },
   "dependencies": {
+    "@emailjs/browser": "^4.4.1",
     "@shadcn/ui": "^0.0.4",
     "@tailwindcss/forms": "^0.5.10",
+    "emailjs-com": "^3.2.0",
     "formidable": "^3.5.2",
     "framer-motion": "^12.5.0",
     "next": "15.1.6",

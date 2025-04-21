@@ -1,112 +1,83 @@
-// app/photo/page.js
+"use client";
 
-"use client"
-import React, { useState } from 'react'
+import React, { useState } from "react";
+import emailjs from "@emailjs/browser";
+
+const FORMSPREE_ENDPOINT = "https://formspree.io/f/xvgapaag"; // ← Formspree ID
+const EMAILJS_SERVICE   = "service_m9l5wfd";
+const EMAILJS_TEMPLATE  = "auto_reply";
+const EMAILJS_PUBLICKEY = "D-fVqiL5jGJXfMtlI";
 
 export default function ContactPage() {
-  const [name, setName] = useState('')
-  const [email, setEmail] = useState('')
-  const [message, setMessage] = useState('')
-  const [loading, setLoading] = useState(false)
-  const [statusMsg, setStatusMsg] = useState('')
+  const [status, setStatus] = useState({ ok: false, error: false, sent: false });
 
-  const handleSubmit = async (e) => {
-    e.preventDefault()
-    setLoading(true)
-    setStatusMsg('') // メッセージリセット
+  async function handleSubmit(e) {
+    e.preventDefault();
+    const form = e.currentTarget;
+    const formData = new FormData(form);
 
-    try {
-      const res = await fetch('/api/contact', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, email, message }),
-      })
+    // ---------- ① Formspree へ送信（運営者宛） ----------
+    const res = await fetch(FORMSPREE_ENDPOINT, {
+      method: "POST",
+      body: formData,
+      headers: { Accept: "application/json" },
+    });
 
-      if (res.ok) {
-        // 成功
-        setStatusMsg('お問い合わせを送信しました。ありがとうございます！')
-        setName('')
-        setEmail('')
-        setMessage('')
-      } else {
-        // 失敗
-        setStatusMsg('メール送信に失敗しました。時間をおいて再度お試しください。')
+    // ---------- ② EmailJS で自動返信 ----------
+    if (res.ok) {
+      try {
+        await emailjs.send(
+          EMAILJS_SERVICE,
+          EMAILJS_TEMPLATE,
+          {
+            name   : form.name.value,
+            email  : form.email.value,
+            message: form.message.value,
+          },
+          EMAILJS_PUBLICKEY
+        );
+        setStatus({ ok: true, sent: true });
+        form.reset();
+      } catch {
+        setStatus({ error: true, sent: true });
       }
-    } catch (error) {
-      console.error(error)
-      setStatusMsg('エラーが発生しました。再度お試しください。')
-    } finally {
-      setLoading(false)
+    } else {
+      setStatus({ error: true, sent: true });
     }
   }
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold mb-4">Contact</h1>
-      <p className="mb-6">お問い合わせは以下のフォームよりご連絡ください。</p>
+      <h1 className="text-3xl font-bold mb-6">Contact</h1>
 
-      <form onSubmit={handleSubmit} className="max-w-md mx-auto space-y-4">
-        {/* 名前 */}
-        <div>
-          <label className="block mb-1 text-sm font-medium text-gray-100">
-            お名前
-          </label>
-          <input
-            type="text"
-            className="w-full rounded-md bg-gray-800 text-white border border-gray-600 p-2"
-            placeholder="山田太郎"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            required
-          />
-        </div>
-
-        {/* メールアドレス */}
-        <div>
-          <label className="block mb-1 text-sm font-medium text-gray-100">
-            メールアドレス
-          </label>
-          <input
-            type="email"
-            className="w-full rounded-md bg-gray-800 text-white border border-gray-600 p-2"
-            placeholder="example@example.com"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
-        </div>
-
-        {/* お問い合わせ内容 */}
-        <div>
-          <label className="block mb-1 text-sm font-medium text-gray-100">
-            お問い合わせ内容
-          </label>
-          <textarea
-            rows={5}
-            className="w-full rounded-md bg-gray-800 text-white border border-gray-600 p-2"
-            placeholder="お問い合わせの内容を記入してください"
-            value={message}
-            onChange={(e) => setMessage(e.target.value)}
-            required
-          />
-        </div>
-
-        {/* 送信ボタン */}
-        <button
-          type="submit"
-          className="px-4 py-2 bg-white text-black rounded hover:bg-gray-200 transition-colors"
-          disabled={loading}
-        >
-          {loading ? '送信中...' : '送信'}
-        </button>
-      </form>
-
-      {/* ステータスメッセージ */}
-      {statusMsg && (
-        <div className="mt-4 text-white">
-          {statusMsg}
-        </div>
+      {status.sent && status.ok && (
+        <p className="mb-4 text-green-400">送信しました。ありがとうございました！</p>
       )}
+      {status.sent && status.error && (
+        <p className="mb-4 text-red-400">送信に失敗しました。時間をおいて再度お試しください。</p>
+      )}
+
+      <form onSubmit={handleSubmit} className="max-w-md mx-auto space-y-4 text-white">
+        {/* honeypot */}
+        <input type="text" name="company" className="hidden" tabIndex="-1" autoComplete="off" />
+
+        <div>
+          <label className="block text-sm mb-1">お名前</label>
+          <input name="name" required className="w-full bg-gray-800 border border-gray-600 p-2 rounded" />
+        </div>
+
+        <div>
+          <label className="block text-sm mb-1">メールアドレス</label>
+          <input type="email" name="email" required className="w-full bg-gray-800 border border-gray-600 p-2 rounded" />
+        </div>
+
+        <div>
+          <label className="block text-sm mb-1">お問い合わせ内容</label>
+          <textarea rows={6} name="message" required className="w-full bg-gray-800 border border-gray-600 p-2 rounded" />
+        </div>
+
+        <button className="px-4 py-2 bg-white text-black rounded hover:bg-gray-200">送信</button>
+      </form>
     </div>
-  )
+  );
 }
