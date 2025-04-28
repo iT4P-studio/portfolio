@@ -1,77 +1,62 @@
 "use client";
 
-import React, { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
 import ReactGA from "react-ga4";
-// Google Analytics 測定 ID を入力して設定
-ReactGA.initialize("G-GVJZVJ676G");
-// ページビューイベントを処理
-ReactGA.send("pageview");
+
+// セクションタイトルを定義
+const sectionTitles = ["経歴", "撮影歴", "所有機材", "Links"];
+// セクションコンポーネントの配列（キー付き）
+const sections = [
+  <CareerSection key="career" />,
+  <HistorySection key="history" />,
+  <EquipmentSection key="equipment" />,
+  <LinksSection key="links" />,
+];
 
 export default function AboutPage() {
-  // 4セクション: 0=経歴, 1=撮影歴, 2=所有機材, 3=Links
   const [sectionIndex, setSectionIndex] = useState(0);
-  const TOTAL_SECTIONS = 4;
-
-  // 1回のスクロールあたり1セクションのみ移動するロック
-  const [wheelLock, setWheelLock] = useState(false);
+  const wheelLock = useRef(false);
 
   const goNext = useCallback(() => {
-    setSectionIndex((prev) => (prev < TOTAL_SECTIONS - 1 ? prev + 1 : prev));
+    setSectionIndex((prev) => Math.min(prev + 1, sectionTitles.length - 1));
   }, []);
+
   const goPrev = useCallback(() => {
-    setSectionIndex((prev) => (prev > 0 ? prev - 1 : prev));
+    setSectionIndex((prev) => Math.max(prev - 1, 0));
   }, []);
 
+  // Google Analytics の初期化とページビュー送信（クライアントで一度だけ）
   useEffect(() => {
-    const handleWheelEvent = (e) => {
-      e.preventDefault();
-      if (wheelLock) return;
+    ReactGA.initialize("G-GVJZVJ676G");
+    ReactGA.send("pageview");
+  }, []);
 
-      // 下方向( deltaY>0 ) => 次へ
-      if (e.deltaY > 0) {
-        goNext();
-      }
-      // 上方向( deltaY<0 ) => 前へ
-      else if (e.deltaY < 0) {
-        goPrev();
-      }
-      setWheelLock(true);
-      // 1秒後にロック解除
+  // ホイールスクロールによるセクション移動のロック付きハンドラ
+  useEffect(() => {
+    const handleWheel = (e) => {
+      e.preventDefault();
+      if (wheelLock.current) return;
+      if (e.deltaY > 0) goNext();
+      else if (e.deltaY < 0) goPrev();
+      wheelLock.current = true;
       setTimeout(() => {
-        setWheelLock(false);
+        wheelLock.current = false;
       }, 1000);
     };
 
-    window.addEventListener("wheel", handleWheelEvent, { passive: false });
-    return () => {
-      window.removeEventListener("wheel", handleWheelEvent);
-    };
-  }, [wheelLock, goNext, goPrev]);
-
-  // 4つのセクションを配列化
-  const sections = [
-    <CareerSection key="career" />,
-    <HistorySection key="history" />,
-    <EquipmentSection key="equip" />,
-    <LinksSection key="links" />,
-  ];
+    window.addEventListener("wheel", handleWheel, { passive: false });
+    return () => window.removeEventListener("wheel", handleWheel);
+  }, [goNext, goPrev]);
 
   return (
-    <div
-      className="relative bg-black text-white"
-      style={{
-        width: "100vw",
-        height: "calc(100vh - 60px)",
-        marginTop: "60px",
-        overflow: "hidden",
-        // このページだけ明朝体で統一
-        fontFamily: "serif",
-      }}
+    <main
+      className="relative bg-black text-white w-screen mt-[60px] overflow-hidden"
+      style={{ height: "calc(100vh - 60px)", fontFamily: "serif" }}
     >
       <AnimatePresence mode="wait">
-        <motion.div
+        <motion.section
           key={sectionIndex}
           className="absolute inset-0 flex items-start justify-center pt-10"
           initial={{ opacity: 0 }}
@@ -80,42 +65,41 @@ export default function AboutPage() {
           transition={{ duration: 0.7 }}
         >
           {sections[sectionIndex]}
-        </motion.div>
+        </motion.section>
       </AnimatePresence>
 
-      {/* 右側: タイトル + 四角形を縦に並べる */}
-      <div className="absolute right-4 top-1/2 -translate-y-1/2 flex flex-col space-y-4 items-end">
-        {/* タイトル配列とセクションidxを揃える */}
-        {["経歴", "撮影歴", "所有機材", "Links"].map((title, idx) => {
+      <nav
+        aria-label="セクションナビゲーション"
+        className="absolute right-4 top-1/2 -translate-y-1/2 flex flex-col space-y-4 items-end"
+      >
+        {sectionTitles.map((title, idx) => {
           const isActive = sectionIndex === idx;
           return (
-            <div
+            <button
               key={idx}
-              className="flex items-center cursor-pointer"
+              className="flex items-center focus:outline-none"
               onClick={() => setSectionIndex(idx)}
+              aria-current={isActive ? "true" : undefined}
             >
-              {/* タイトル部分: 非アクティブはグレー, アクティブは白 */}
               <span
                 className={isActive ? "mr-2 text-white" : "mr-2 text-gray-400"}
               >
                 {title}
               </span>
-
-              {/* 四角形 */}
-              <div
-                className={`w-3 h-12 border border-white ${
+              <span
+                className={`w-3 h-12 border border-white block ${
                   isActive ? "bg-white" : "bg-black"
                 }`}
               />
-            </div>
+            </button>
           );
         })}
-      </div>
-    </div>
+      </nav>
+    </main>
   );
 }
 
-// ------------------- 各セクション -------------------
+// ------------------- 各セクションコンポーネント -------------------
 
 function CareerSection() {
   const careerData = [
@@ -126,10 +110,11 @@ function CareerSection() {
     ["2024/7", "応用情報技術者試験 合格"],
     ["2026/3", "筑波大学 情報学群 知識情報・図書館学類 卒業（見込み）"],
   ];
+
   return (
-    <div className="p-4">
+    <section className="p-4">
       <h2 className="text-4xl font-bold mb-6 text-center">経歴</h2>
-      <table className="mx-auto w-[600px] text-lg">
+      <table className="mx-auto w-full max-w-2xl text-lg">
         <tbody>
           {careerData.map(([time, event], i) => (
             <tr key={i} className="border-b border-gray-600">
@@ -139,7 +124,7 @@ function CareerSection() {
           ))}
         </tbody>
       </table>
-    </div>
+    </section>
   );
 }
 
@@ -151,10 +136,11 @@ function HistorySection() {
     ["イベント撮影・配信", ""],
     ["スクール撮影・配信", ""],
   ];
+
   return (
-    <div className="p-4">
+    <section className="p-4">
       <h2 className="text-4xl font-bold mb-6 text-center">撮影歴</h2>
-      <table className="mx-auto w-[600px] text-lg">
+      <table className="mx-auto w-full max-w-2xl text-lg">
         <tbody>
           {historyData.map(([subject, period], i) => (
             <tr key={i} className="border-b border-gray-600">
@@ -166,7 +152,7 @@ function HistorySection() {
           ))}
         </tbody>
       </table>
-    </div>
+    </section>
   );
 }
 
@@ -179,15 +165,16 @@ function EquipmentSection() {
         "Z24-70mm F4",
         "Z70-200mm F2.8/S",
         "Z50mm f1.2/S",
-        "Z 26/2.8",
+        "Z26/2.8",
         "Z テレコンバーター TC-2.0x",
-        "AF-S FI 8-15/3.5-4.5E",
+        "AF-S Fisheye 8-15/3.5-4.5E",
       ],
     },
     { category: "自動車", items: ["GR86"] },
   ];
+
   return (
-    <div className="p-4">
+    <section className="p-4">
       <h2 className="text-4xl font-bold mb-6 text-center">所有機材</h2>
       {categories.map((cat, i) => (
         <div key={i} className="mb-6 text-lg">
@@ -201,7 +188,7 @@ function EquipmentSection() {
           ))}
         </div>
       ))}
-    </div>
+    </section>
   );
 }
 
@@ -220,7 +207,7 @@ function LinksSection() {
   ];
 
   return (
-    <div className="p-4">
+    <section className="p-4">
       <h2 className="text-4xl font-bold mb-6 text-center">Links</h2>
       <div className="flex gap-8 justify-center items-center">
         {iconLinks.map((lk, i) => (
@@ -235,6 +222,6 @@ function LinksSection() {
           </a>
         ))}
       </div>
-    </div>
+    </section>
   );
 }
