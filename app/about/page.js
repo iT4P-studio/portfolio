@@ -1,125 +1,171 @@
 "use client";
 
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
 import ReactGA from "react-ga4";
-// Google Analytics 測定 ID を入力して設定
-ReactGA.initialize("G-GVJZVJ676G");
-// ページビューイベントを処理
-ReactGA.send("pageview");
+
+// セクションタイトルを定義
+const sectionTitles = ["経歴", "撮影歴", "所有機材", "Links"];
+// セクションコンポーネントの配列（キー付き）
+const sections = [
+  <CareerSection key="career" />,
+  <HistorySection key="history" />,
+  <EquipmentSection key="equipment" />,
+  <LinksSection key="links" />,
+];
+
+const historyGroups = [
+  {
+    period: "2022",
+    items: [
+      "第61回東京都中学校総合体育大会 バレーボール競技",
+      "令和4年度 第76回千葉県中学校総合体育大会 バレーボール",
+      "第42回 つくばマラソン",
+    ],
+  },
+  {
+    period: "2023",
+    items: [
+      "第20回 新宿シティハーフマラソン・区民健康マラソン",
+      "SPARTAN RACE IBARAKI SPRINT 5K",
+      "第55回 記念青梅マラソン",
+      "東京マラソン2023",
+      "第57回 全国道場少年剣道大会",
+      "福岡マラソン2023",
+      "第43回つくばマラソン",
+    ],
+  },
+  {
+    period: "2024",
+    items: [
+      "Baseball5日本選手権大会",
+      "SPARTAN RACE IBARAKI SPRINT 5K / Mt.FUJI Susono SPRINT / OKINAWA SUPER/ SPRINT",
+      "第56回 青梅マラソン",
+      "東京マラソン2024",
+      "第32回 千葉ポートアリーナ杯争奪ミニバスケットボール大会",
+      "令和6年度 全国高等学校総合体育大会 バスケットボール競技",
+      "第79回東北高等学校男女バスケットボール選手権大会 兼 第60回NHK杯大会",
+      "令和6年度 第67回福島県中学校体育大会 ハンドボール競技",
+      "令和6年度 茨城県総合体育大会中学校の部 ハンドボール競技",
+      "令和6年度 第76回福岡県中学校バレーボール大会",
+      "令和6年度 第58回神奈川県中学校総合体育大会 第76回神奈川県中学校軟式野球大会",
+      "令和6年度 全国中学校体育大会 第54回全国中学校バスケットボール大会",
+      "ツール・ド・東北 2024",
+      "SV.LEAGUE",
+      "横浜マラソン2024",
+      "福岡マラソン2024",
+      "おきなわKINトライアスロン大会2024",
+      "第44回つくばマラソン",
+    ],
+  },
+];
+
+function useWindowSize() {
+  const [width, setWidth] = useState(0);
+
+  useEffect(() => {
+    // 初回およびリサイズ時にウィンドウ幅をセット
+    const handleResize = () => {
+      setWidth(window.innerWidth);
+    };
+    window.addEventListener("resize", handleResize);
+    handleResize(); // マウント時に一度呼ぶ
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  return width;
+}
 
 export default function AboutPage() {
-  // 4セクション: 0=経歴, 1=撮影歴, 2=所有機材, 3=Links
   const [sectionIndex, setSectionIndex] = useState(0);
-  const TOTAL_SECTIONS = 4;
+  const wheelLock = useRef(false);
 
-  // 1回のスクロールあたり1セクションのみ移動するロック
-  const [wheelLock, setWheelLock] = useState(false);
+  const width = useWindowSize();
+  const isSP = width > 0 && width < 640;
 
   const goNext = useCallback(() => {
-    setSectionIndex((prev) => (prev < TOTAL_SECTIONS - 1 ? prev + 1 : prev));
+    setSectionIndex((prev) => Math.min(prev + 1, sectionTitles.length - 1));
   }, []);
+
   const goPrev = useCallback(() => {
-    setSectionIndex((prev) => (prev > 0 ? prev - 1 : prev));
+    setSectionIndex((prev) => Math.max(prev - 1, 0));
   }, []);
 
   useEffect(() => {
-    const handleWheelEvent = (e) => {
-      e.preventDefault();
-      if (wheelLock) return;
+    ReactGA.initialize("G-GVJZVJ676G");
+    ReactGA.send("pageview");
+  }, []);
 
-      // 下方向( deltaY>0 ) => 次へ
-      if (e.deltaY > 0) {
-        goNext();
-      } 
-      // 上方向( deltaY<0 ) => 前へ
-      else if (e.deltaY < 0) {
-        goPrev();
-      }
-      setWheelLock(true);
-      // 1秒後にロック解除
+  useEffect(() => {
+    const handleWheel = (e) => {
+      e.preventDefault();
+      if (wheelLock.current) return;
+      if (e.deltaY > 0) goNext();
+      else if (e.deltaY < 0) goPrev();
+      wheelLock.current = true;
       setTimeout(() => {
-        setWheelLock(false);
+        wheelLock.current = false;
       }, 1000);
     };
-
-    window.addEventListener("wheel", handleWheelEvent, { passive: false });
-    return () => {
-      window.removeEventListener("wheel", handleWheelEvent);
-    };
-  }, [wheelLock, goNext, goPrev]);
-
-  // 4つのセクションを配列化
-  const sections = [
-    <CareerSection key="career" />,
-    <HistorySection key="history" />,
-    <EquipmentSection key="equip" />,
-    <LinksSection key="links" />,
-  ];
+    window.addEventListener("wheel", handleWheel, { passive: false });
+    return () => window.removeEventListener("wheel", handleWheel);
+  }, [goNext, goPrev]);
 
   return (
-    <div
-      className="relative bg-black text-white"
-      style={{
-        width: "100vw",
-        height: "calc(100vh - 60px)",
-        marginTop: "60px",
-        overflow: "hidden",
-        // このページだけ明朝体で統一
-        fontFamily: "serif",
-      }}
+    <main
+      className="relative bg-black text-white w-screen overflow-hidden"
+      style={{ height: "calc(100vh - 60px)", fontFamily: "serif" }}
     >
       <AnimatePresence mode="wait">
-        <motion.div
+        <motion.section
           key={sectionIndex}
-          className="absolute inset-0 flex items-start justify-center pt-10"
+          className="absolute inset-0 flex items-start justify-center"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.7 }}
         >
           {sections[sectionIndex]}
-        </motion.div>
+        </motion.section>
       </AnimatePresence>
 
-      {/* 右側: タイトル + 四角形を縦に並べる */}
-      <div className="absolute right-4 top-1/2 -translate-y-1/2 flex flex-col space-y-4 items-end">
-        {/* タイトル配列とセクションidxを揃える */}
-        {["経歴", "撮影歴", "所有機材", "Links"].map((title, idx) => {
+      <nav
+        aria-label="セクションナビゲーション"
+        className="absolute right-1 top-1/2 -translate-y-1/2 flex flex-col space-y-4 items-end"
+      >
+        {sectionTitles.map((title, idx) => {
           const isActive = sectionIndex === idx;
           return (
-            <div
+            <button
               key={idx}
-              className="flex items-center cursor-pointer"
+              className="flex items-center focus:outline-none"
               onClick={() => setSectionIndex(idx)}
+              aria-current={isActive ? "true" : undefined}
             >
-              {/* タイトル部分: 非アクティブはグレー, アクティブは白 */}
+              {!isSP && (
+                <span
+                  className={
+                    isActive ? "mr-2 text-white" : "mr-2 text-gray-400"
+                  }
+                >
+                  {title}
+                </span>
+              )}
               <span
-                className={
-                  isActive
-                    ? "mr-2 text-white"
-                    : "mr-2 text-gray-400"
-                }
-              >
-                {title}
-              </span>
-
-              {/* 四角形 */}
-              <div
-                className={`w-3 h-12 border border-white ${
+                className={`w-3 h-12 border border-white block ${
                   isActive ? "bg-white" : "bg-black"
                 }`}
               />
-            </div>
+            </button>
           );
         })}
-      </div>
-    </div>
+      </nav>
+    </main>
   );
 }
 
-// ------------------- 各セクション -------------------
+// ------------------- 各セクションコンポーネント -------------------
 
 function CareerSection() {
   const careerData = [
@@ -130,45 +176,57 @@ function CareerSection() {
     ["2024/7", "応用情報技術者試験 合格"],
     ["2026/3", "筑波大学 情報学群 知識情報・図書館学類 卒業（見込み）"],
   ];
+
   return (
-    <div className="p-4">
+    <section className="p-4">
       <h2 className="text-4xl font-bold mb-6 text-center">経歴</h2>
-      <table className="mx-auto w-[600px] text-lg">
+      <table className="mx-auto w-full max-w-2xl text-lg">
         <tbody>
           {careerData.map(([time, event], i) => (
             <tr key={i} className="border-b border-gray-600">
-              <td className="py-2 pr-4 whitespace-nowrap text-left">{time}</td>
-              <td className="py-2 whitespace-nowrap text-left">{event}</td>
+              <td className="py-2 pr-4 text-left">{time}</td>
+              <td className="py-2 text-left">{event}</td>
             </tr>
           ))}
         </tbody>
       </table>
-    </div>
+    </section>
   );
 }
 
 function HistorySection() {
-  const historyData = [
-    ["東京マラソン", "2023〜25"],
-    ["S.V.League", "2024〜"],
-    ["スポーツ撮影・配信", ""],
-    ["イベント撮影・配信", ""],
-    ["スクール撮影・配信", ""],
-  ];
   return (
-    <div className="p-4">
-      <h2 className="text-4xl font-bold mb-6 text-center">撮影歴</h2>
-      <table className="mx-auto w-[600px] text-lg">
+    <section className="p-4">
+      <h2 className="text-[20px] sm:text-[36px] font-bold text-center">
+        撮影歴
+      </h2>
+      <table className="mx-auto w-full max-w-2xl text-[14px] sm:text-[18px]">
         <tbody>
-          {historyData.map(([subject, period], i) => (
-            <tr key={i} className="border-b border-gray-600">
-              <td className="py-2 pr-4 whitespace-nowrap text-left">{subject}</td>
-              <td className="py-2 whitespace-nowrap text-left">{period}</td>
-            </tr>
+          {historyGroups.map((group) => (
+            <React.Fragment key={group.period}>
+              <tr>
+                <td
+                  colSpan={2}
+                  className="text-[16px] sm:text-[24px] font-semibold text-center"
+                >
+                  {group.period}
+                </td>
+              </tr>
+              {group.items.map((subject, i) => (
+                <tr key={i} className="border-b border-gray-600">
+                  <td className="pr-4 text-[8px] sm:text-[12px] text-left">
+                    {subject}
+                  </td>
+                  <td className="text-[8px] sm:text-[12px] text-left">
+                    {/* 空欄 */}
+                  </td>
+                </tr>
+              ))}
+            </React.Fragment>
           ))}
         </tbody>
       </table>
-    </div>
+    </section>
   );
 }
 
@@ -177,12 +235,20 @@ function EquipmentSection() {
     { category: "カメラ", items: ["Nikon Z9", "Nikon Z8", "Nikon Z6"] },
     {
       category: "レンズ",
-      items: ["Z24-70mm F4", "Z70-200mm F2.8/S", "Z50mm f1.2/S", "Z 26/2.8", "Z テレコンバーター TC-2.0x", "AF-S FI 8-15/3.5-4.5E"],
+      items: [
+        "Z24-70mm F4",
+        "Z70-200mm F2.8/S",
+        "Z50mm f1.2/S",
+        "Z26/2.8",
+        "Z テレコンバーター TC-2.0x",
+        "AF-S Fisheye 8-15/3.5-4.5E",
+      ],
     },
     { category: "自動車", items: ["GR86"] },
   ];
+
   return (
-    <div className="p-4">
+    <section className="p-4">
       <h2 className="text-4xl font-bold mb-6 text-center">所有機材</h2>
       {categories.map((cat, i) => (
         <div key={i} className="mb-6 text-lg">
@@ -190,11 +256,13 @@ function EquipmentSection() {
             {cat.category}
           </h4>
           {cat.items.map((item, j) => (
-            <p key={j} className="whitespace-nowrap text-center">{item}</p>
+            <p key={j} className="whitespace-nowrap text-center">
+              {item}
+            </p>
           ))}
         </div>
       ))}
-    </div>
+    </section>
   );
 }
 
@@ -213,7 +281,7 @@ function LinksSection() {
   ];
 
   return (
-    <div className="p-4">
+    <section className="p-4">
       <h2 className="text-4xl font-bold mb-6 text-center">Links</h2>
       <div className="flex gap-8 justify-center items-center">
         {iconLinks.map((lk, i) => (
@@ -228,6 +296,6 @@ function LinksSection() {
           </a>
         ))}
       </div>
-    </div>
+    </section>
   );
 }
