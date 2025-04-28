@@ -32,7 +32,7 @@ export default function AboutPage() {
       // 下方向( deltaY>0 ) => 次へ
       if (e.deltaY > 0) {
         goNext();
-      } 
+      }
       // 上方向( deltaY<0 ) => 前へ
       else if (e.deltaY < 0) {
         goPrev();
@@ -96,11 +96,7 @@ export default function AboutPage() {
             >
               {/* タイトル部分: 非アクティブはグレー, アクティブは白 */}
               <span
-                className={
-                  isActive
-                    ? "mr-2 text-white"
-                    : "mr-2 text-gray-400"
-                }
+                className={isActive ? "mr-2 text-white" : "mr-2 text-gray-400"}
               >
                 {title}
               </span>
@@ -162,7 +158,9 @@ function HistorySection() {
         <tbody>
           {historyData.map(([subject, period], i) => (
             <tr key={i} className="border-b border-gray-600">
-              <td className="py-2 pr-4 whitespace-nowrap text-left">{subject}</td>
+              <td className="py-2 pr-4 whitespace-nowrap text-left">
+                {subject}
+              </td>
               <td className="py-2 whitespace-nowrap text-left">{period}</td>
             </tr>
           ))}
@@ -177,7 +175,14 @@ function EquipmentSection() {
     { category: "カメラ", items: ["Nikon Z9", "Nikon Z8", "Nikon Z6"] },
     {
       category: "レンズ",
-      items: ["Z24-70mm F4", "Z70-200mm F2.8/S", "Z50mm f1.2/S", "Z 26/2.8", "Z テレコンバーター TC-2.0x", "AF-S FI 8-15/3.5-4.5E"],
+      items: [
+        "Z24-70mm F4",
+        "Z70-200mm F2.8/S",
+        "Z50mm f1.2/S",
+        "Z 26/2.8",
+        "Z テレコンバーター TC-2.0x",
+        "AF-S FI 8-15/3.5-4.5E",
+      ],
     },
     { category: "自動車", items: ["GR86"] },
   ];
@@ -190,7 +195,9 @@ function EquipmentSection() {
             {cat.category}
           </h4>
           {cat.items.map((item, j) => (
-            <p key={j} className="whitespace-nowrap text-center">{item}</p>
+            <p key={j} className="whitespace-nowrap text-center">
+              {item}
+            </p>
           ))}
         </div>
       ))}
