@@ -17,46 +17,33 @@ const sections = [
 
 const historyGroups = [
   {
-    period: "2022",
+    period: "バレーボール",
     items: [
-      "第61回東京都中学校総合体育大会 バレーボール競技",
-      "令和4年度 第76回千葉県中学校総合体育大会 バレーボール",
-      "第42回 つくばマラソン",
-    ],
-  },
-  {
-    period: "2023",
-    items: [
-      "第20回 新宿シティハーフマラソン・区民健康マラソン",
-      "SPARTAN RACE IBARAKI SPRINT 5K",
-      "第55回 記念青梅マラソン",
-      "東京マラソン2023",
-      "第57回 全国道場少年剣道大会",
-      "福岡マラソン2023",
-      "第43回つくばマラソン",
-    ],
-  },
-  {
-    period: "2024",
-    items: [
-      "Baseball5日本選手権大会",
-      "SPARTAN RACE IBARAKI SPRINT 5K / Mt.FUJI Susono SPRINT / OKINAWA SUPER/ SPRINT",
-      "第56回 青梅マラソン",
-      "東京マラソン2024",
-      "第32回 千葉ポートアリーナ杯争奪ミニバスケットボール大会",
-      "令和6年度 全国高等学校総合体育大会 バスケットボール競技",
-      "第79回東北高等学校男女バスケットボール選手権大会 兼 第60回NHK杯大会",
-      "令和6年度 第67回福島県中学校体育大会 ハンドボール競技",
-      "令和6年度 茨城県総合体育大会中学校の部 ハンドボール競技",
-      "令和6年度 第76回福岡県中学校バレーボール大会",
-      "令和6年度 第58回神奈川県中学校総合体育大会 第76回神奈川県中学校軟式野球大会",
-      "令和6年度 全国中学校体育大会 第54回全国中学校バスケットボール大会",
-      "ツール・ド・東北 2024",
       "SV.LEAGUE",
-      "横浜マラソン2024",
-      "福岡マラソン2024",
-      "おきなわKINトライアスロン大会2024",
-      "第44回つくばマラソン",
+    ],
+  },
+  {
+    period: "マラソン",
+    items: [
+      "東京マラソン",
+      "横浜マラソン",
+      "福岡マラソン",
+      "その他全国のマラソン・トレイルラン",
+    ],
+  },
+  {
+    period: "ロード",
+    items: [
+      "ツール・ド・東北",
+      "おきなわKINトライアスロン大会",
+    ],
+  },
+  {
+    period: "学校関係",
+    items: [
+      "全国中学校体育大会",
+      "全国高等学校総合体育大会",
+      "その他、イベントの公式記録、スクールなど",
     ],
   },
 ];
@@ -179,7 +166,7 @@ function CareerSection() {
 
   return (
     <section className="p-4">
-      <h2 className="text-4xl font-bold mb-6 text-center">経歴</h2>
+      <h2 className="text-4xl font-bold my-6 text-center">経歴</h2>
       <table className="mx-auto w-full max-w-2xl text-lg">
         <tbody>
           {careerData.map(([time, event], i) => (
@@ -197,7 +184,7 @@ function CareerSection() {
 function HistorySection() {
   return (
     <section className="p-4">
-      <h2 className="text-[20px] sm:text-[36px] font-bold text-center">
+      <h2 className="text-[20px] sm:text-[36px] font-bold text-center my-6">
         撮影歴
       </h2>
       <table className="mx-auto w-full max-w-2xl text-[14px] sm:text-[18px]">
@@ -207,17 +194,17 @@ function HistorySection() {
               <tr>
                 <td
                   colSpan={2}
-                  className="text-[16px] sm:text-[24px] font-semibold text-center"
+                  className="pt-4 text-[16px] sm:text-[24px] font-semibold text-center"
                 >
                   {group.period}
                 </td>
               </tr>
               {group.items.map((subject, i) => (
-                <tr key={i} className="border-b border-gray-600">
-                  <td className="pr-4 text-[8px] sm:text-[12px] text-left">
+                <tr key={i} className="border-none">
+                  <td className=" text-[8px] sm:text-[20px] text-center">
                     {subject}
                   </td>
-                  <td className="text-[8px] sm:text-[12px] text-left">
+                  <td className="text-[8px] sm:text-[12px] text-left ">
                     {/* 空欄 */}
                   </td>
                 </tr>
