@@ -9,7 +9,7 @@ import ReactGA from "react-ga4";
 const sectionTitles = ["経歴", "撮影歴", "所有機材", "Links"];
 // セクションコンポーネントの配列（キー付き）
 const sections = [
-  <CareerSection key="career" />,
+  <CareerSection key="career" />,  
   <HistorySection key="history" />,
   <EquipmentSection key="equipment" />,
   <LinksSection key="links" />,
@@ -18,9 +18,7 @@ const sections = [
 const historyGroups = [
   {
     period: "バレーボール",
-    items: [
-      "SV.LEAGUE",
-    ],
+    items: ["SV.LEAGUE"],
   },
   {
     period: "マラソン",
@@ -33,34 +31,26 @@ const historyGroups = [
   },
   {
     period: "ロード",
-    items: [
-      "ツール・ド・東北",
-      "おきなわKINトライアスロン大会",
-    ],
+    items: ["ツール・ド・東北", "おきなわKINトライアスロン大会"],
   },
   {
     period: "学校関係",
     items: [
       "全国中学校体育大会",
       "全国高等学校総合体育大会",
-      "その他、イベントの公式記録、スクールなど",
+      "各種企業・政府関係イベントの公式記録、スクールなど",
     ],
   },
 ];
 
 function useWindowSize() {
   const [width, setWidth] = useState(0);
-
   useEffect(() => {
-    // 初回およびリサイズ時にウィンドウ幅をセット
-    const handleResize = () => {
-      setWidth(window.innerWidth);
-    };
+    const handleResize = () => setWidth(window.innerWidth);
     window.addEventListener("resize", handleResize);
-    handleResize(); // マウント時に一度呼ぶ
+    handleResize();
     return () => window.removeEventListener("resize", handleResize);
   }, []);
-
   return width;
 }
 
@@ -152,8 +142,6 @@ export default function AboutPage() {
   );
 }
 
-// ------------------- 各セクションコンポーネント -------------------
-
 function CareerSection() {
   const careerData = [
     ["2022/3", "広尾学園高等学校 医進・サイエンスコース 卒業"],
@@ -184,29 +172,23 @@ function CareerSection() {
 function HistorySection() {
   return (
     <section className="p-4">
-      <h2 className="text-[20px] sm:text-[36px] font-bold text-center my-6">
-        撮影歴
-      </h2>
-      <table className="mx-auto w-full max-w-2xl text-[14px] sm:text-[18px]">
+      <h2 className="text-4xl font-bold text-center mt-6">撮影歴</h2>
+      <table className="mx-auto w-full max-w-2xl text-lg">
         <tbody>
           {historyGroups.map((group) => (
             <React.Fragment key={group.period}>
               <tr>
                 <td
                   colSpan={2}
-                  className="pt-4 text-[16px] sm:text-[24px] font-semibold text-center"
+                  className="pt-6 pb-4 text-2xl font-semibold text-center"
                 >
                   {group.period}
                 </td>
               </tr>
               {group.items.map((subject, i) => (
                 <tr key={i} className="border-none">
-                  <td className=" text-[8px] sm:text-[20px] text-center">
-                    {subject}
-                  </td>
-                  <td className="text-[8px] sm:text-[12px] text-left ">
-                    {/* 空欄 */}
-                  </td>
+                  <td className="text-lg text-center">{subject}</td>
+                  <td className="text-lg text-left">{/* 空欄 */}</td>
                 </tr>
               ))}
             </React.Fragment>
@@ -236,14 +218,14 @@ function EquipmentSection() {
 
   return (
     <section className="p-4">
-      <h2 className="text-4xl font-bold mb-6 text-center my-6">所有機材</h2>
+      <h2 className="text-4xl font-bold my-6 text-center">所有機材</h2>
       {categories.map((cat, i) => (
-        <div key={i} className="mb-6 text-lg">
-          <h4 className="text-2xl font-semibold mb-2 whitespace-nowrap text-center">
+        <div key={i} className="mb-6 text-lg text-center">
+          <h4 className="text-2xl font-semibold mb-2 whitespace-nowrap">
             {cat.category}
           </h4>
           {cat.items.map((item, j) => (
-            <p key={j} className="whitespace-nowrap text-center">
+            <p key={j} className="whitespace-nowrap">
               {item}
             </p>
           ))}
@@ -269,8 +251,8 @@ function LinksSection() {
 
   return (
     <section className="p-4">
-      <h2 className="text-4xl font-bold mb-6 text-center my-6">Links</h2>
-      <div className="flex gap-8 justify-center items-center">
+      <h2 className="text-4xl font-bold my-6 text-center">Links</h2>
+      <div className="flex gap-11 justify-center items-center">
         {iconLinks.map((lk, i) => (
           <a
             key={i}
@@ -279,7 +261,7 @@ function LinksSection() {
             rel="noopener noreferrer"
             className="hover:opacity-80 transition"
           >
-            <Image src={lk.icon} alt={lk.alt} width={64} height={64} />
+            <Image src={lk.icon} alt={lk.alt} width={100} height={100} />
           </a>
         ))}
       </div>
