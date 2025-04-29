@@ -236,7 +236,7 @@ function EquipmentSection() {
 
   return (
     <section className="p-4">
-      <h2 className="text-4xl font-bold mb-6 text-center">所有機材</h2>
+      <h2 className="text-4xl font-bold mb-6 text-center my-6">所有機材</h2>
       {categories.map((cat, i) => (
         <div key={i} className="mb-6 text-lg">
           <h4 className="text-2xl font-semibold mb-2 whitespace-nowrap text-center">
@@ -269,7 +269,7 @@ function LinksSection() {
 
   return (
     <section className="p-4">
-      <h2 className="text-4xl font-bold mb-6 text-center">Links</h2>
+      <h2 className="text-4xl font-bold mb-6 text-center my-6">Links</h2>
       <div className="flex gap-8 justify-center items-center">
         {iconLinks.map((lk, i) => (
           <a
