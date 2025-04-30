@@ -52,12 +52,21 @@ function HistorySection() {
     { period: "バレーボール", items: ["SV.LEAGUE"] },
     {
       period: "マラソン",
-      items: ["東京マラソン", "横浜マラソン", "福岡マラソン", "その他全国のマラソン・トレイルラン"],
+      items: [
+        "東京マラソン",
+        "横浜マラソン",
+        "福岡マラソン",
+        "その他全国のマラソン・トレイルラン",
+      ],
     },
     { period: "ロード", items: ["ツール・ド・東北", "おきなわKINトライアスロン大会"] },
     {
       period: "学校関係",
-      items: ["全国中学校体育大会", "全国高等学校総合体育大会", "その他、イベントの公式記録、スクールなど"],
+      items: [
+        "全国中学校体育大会",
+        "全国高等学校総合体育大会",
+        "その他、イベントの公式記録、スクールなど",
+      ],
     },
   ];
   return (
@@ -135,6 +144,8 @@ function LinksSection() {
 function DesktopView() {
   const [index, setIndex] = useState(0);
   const wheelLock = useRef(false);
+
+  // コンポーネント配列
   const sections = [
     <CareerSection key="career" />, 
     <HistorySection key="history" />, 
@@ -142,20 +153,32 @@ function DesktopView() {
     <LinksSection key="links" />
   ];
 
-  // Google Analytics
+  // Next & Prev コールバック
+  const goNext = useCallback(
+    () => setIndex(i => Math.min(i + 1, sections.length - 1)),
+    [sections.length]
+  );
+  const goPrev = useCallback(
+    () => setIndex(i => Math.max(i - 1, 0)),
+    []
+  );
+
+  // Google Analytics 計測
   useEffect(() => {
     ReactGA.initialize("G-GVJZVJ676G");
     ReactGA.send("pageview");
   }, []);
 
-  // スクロール切り替え
-  const goNext = useCallback(() => setIndex(i => Math.min(i + 1, sections.length - 1)), []);
-  const goPrev = useCallback(() => setIndex(i => Math.max(i - 1, 0)), []);
+  // ホイール操作で次/前セクションへ
   useEffect(() => {
     const onWheel = e => {
       e.preventDefault();
       if (wheelLock.current) return;
-      e.deltaY > 0 ? goNext() : goPrev();
+      if (e.deltaY > 0) {
+        goNext();
+      } else {
+        goPrev();
+      }
       wheelLock.current = true;
       setTimeout(() => { wheelLock.current = false; }, 800);
     };
@@ -164,7 +187,10 @@ function DesktopView() {
   }, [goNext, goPrev]);
 
   return (
-    <main className="relative bg-black text-white" style={{ height: "calc(100vh - 60px)" }}>
+    <main
+      className="relative bg-black text-white"
+      style={{ height: "calc(100vh - 60px)" }}
+    >
       <AnimatePresence mode="wait">
         <motion.section
           key={index}
@@ -177,10 +203,20 @@ function DesktopView() {
           {sections[index]}
         </motion.section>
       </AnimatePresence>
+
+      {/* サイドナビゲータ */}
       <nav className="absolute right-4 top-1/2 transform -translate-y-1/2 flex flex-col space-y-4">
         {sectionTitles.map((t, i) => (
-          <button key={i} onClick={() => setIndex(i)} className="flex items-center focus:outline-none">
-            <span className={index===i?"w-3 h-12 bg-white":"w-3 h-12 bg-black border border-white"}></span>
+          <button
+            key={i}
+            onClick={() => setIndex(i)}
+            className="focus:outline-none"
+          >
+            <span
+              className={`w-3 h-12 border border-white block ${
+                index === i ? "bg-white" : "bg-black"
+              }`}
+            />
           </button>
         ))}
       </nav>
