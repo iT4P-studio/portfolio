@@ -64,7 +64,7 @@ export default function ContactPage() {
 
       {/* プレビュー表示 */}
       {preview ? (
-        <div className="max-w-md mx-auto bg-gray-900 p-6 rounded text-white space-y-4">
+        <div className="max-w-md mx-auto bg-gray-600 p-6 rounded text-white space-y-4">
           <h2 className="text-xl font-semibold">内容確認</h2>
           <div><strong>お名前:</strong> {formValues.name}</div>
           <div><strong>メールアドレス:</strong> {formValues.email}</div>
