@@ -19,14 +19,14 @@ export default function HomeClient({ slides }) {
     }
   }, [visibleCount]);
 
-  // スライド切り替え
+  // スライドショー切り替え: テキスト全表示後に開始
   useEffect(() => {
-    if (!slides.length) return;
+    if (visibleCount < phrasesWithComma.length || !slides.length) return;
     const id = setInterval(() => {
       setSlideIndex((i) => (i + 1) % slides.length);
     }, 4000);
     return () => clearInterval(id);
-  }, [slides.length]);
+  }, [slides.length, visibleCount]);
 
   return (
     <div className="relative flex flex-col">

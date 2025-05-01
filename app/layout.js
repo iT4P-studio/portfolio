@@ -9,13 +9,20 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="ja">
-      <body>
+    <html lang="ja" className="flex flex-col min-h-screen">
+      <body className="flex flex-col flex-grow">
         {/* 全ページ共通のヘッダー */}
         <Header />
 
         {/* ページごとの内容 */}
-        <main className="overflow-hidden">{children}</main>
+        <main className="flex-grow overflow-hidden">
+          {children}
+        </main>
+
+        {/* フッター */}
+        <footer className="bg-black text-gray-500 text-center py-4">
+          © Copyright iT4P studio All rights reserved.
+        </footer>
       </body>
     </html>
   )
