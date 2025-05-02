@@ -29,13 +29,13 @@ export default function PhotoGrid({ images }) {
     }
   }, [progress]);
 
-  // 7秒経過で強制フェードアウト
+  // 4秒経過で強制フェードアウト
   useEffect(() => {
     if (!isLoading) return;
     const maxTimer = setTimeout(() => {
       setFadeOut(true);
       setTimeout(() => setIsLoading(false), 500);
-    }, 7000);
+    }, 4000);
     return () => clearTimeout(maxTimer);
   }, [isLoading]);
 
