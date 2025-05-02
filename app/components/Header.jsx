@@ -50,13 +50,13 @@ export default function Header() {
             ))}
           </div>
 
-          {/* SNSアイコン */}
+          {/* SNSアイコン (デスクトップ) */}
           <div className="hidden md:flex space-x-4">
-            <a href="https://x.com/it4p_studio" target="_blank" rel="noopener noreferrer">
+            <a href="https://twitter.com/your_x_profile" target="_blank" rel="noopener noreferrer">
               <img src="/icons/x.png" alt="X" className="h-6 w-6" />
             </a>
-            <a href="https://www.instagram.com/it4hara5a/" target="_blank" rel="noopener noreferrer">
-              <img src="/icons/Instagram.png" alt="Instagram" className="h-6 w-6" />
+            <a href="https://instagram.com/your_instagram_profile" target="_blank" rel="noopener noreferrer">
+              <img src="/icons/instagram.png" alt="Instagram" className="h-6 w-6" />
             </a>
           </div>
 
@@ -91,7 +91,17 @@ export default function Header() {
             </Link>
           ))}
         </nav>
+        {/* モバイルメニュー下部: SNSアイコン （Contact真下） */}
+        <div className="mt-8 px-6 flex space-x-4">
+          <a href="https://twitter.com/your_x_profile" target="_blank" rel="noopener noreferrer">
+            <img src="/icons/x.png" alt="X" className="h-6 w-6" />
+          </a>
+          <a href="https://instagram.com/your_instagram_profile" target="_blank" rel="noopener noreferrer">
+            <img src="/icons/instagram.png" alt="Instagram" className="h-6 w-6" />
+          </a>
+        </div>
       </div>
+
     </header>
   );
 }
