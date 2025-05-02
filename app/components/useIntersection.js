@@ -1,28 +1,25 @@
-"use client";
-import { useRef, useState, useEffect } from "react";
+'use client';
+import { useEffect, useState, useRef } from 'react';
 
-/**
- * 画面内に入ったら "isVisible: true" を返すカスタムフック
- * threshold, rootMargin など必要に応じて調整
- */
-export default function useIntersection(options = {}) {
+export default function useIntersection({ threshold = 0.1, rootMargin = '200px' } = {}) {
   const ref = useRef(null);
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
-    if (!ref.current) return;
-    const observer = new IntersectionObserver(([entry]) => {
-      if (entry.isIntersecting) {
-        setIsVisible(true);
-        observer.unobserve(entry.target); // 1度表示されたら解除
-      }
-    }, options);
-
-    observer.observe(ref.current);
-    return () => {
-      observer.disconnect();
-    };
-  }, [ref, options]);
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsVisible(true);
+          observer.disconnect();
+        }
+      },
+      { rootMargin, threshold }
+    );
+    if (ref.current) {
+      observer.observe(ref.current);
+    }
+    return () => observer.disconnect();
+  }, [threshold, rootMargin]);
 
   return [ref, isVisible];
 }

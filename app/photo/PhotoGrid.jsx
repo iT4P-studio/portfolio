@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import React, { useState, useEffect } from "react";
-import PhotoCard from "../components/PhotoCard";
+import React, { useState, useEffect } from 'react';
+import PhotoCard from '../components/PhotoCard';
 
 export default function PhotoGrid({ images }) {
   const totalImages = images.length;
@@ -9,9 +9,9 @@ export default function PhotoGrid({ images }) {
   const [isLoading, setIsLoading] = useState(true);
   const [fadeOut, setFadeOut] = useState(false);
 
-  // 画像ロード完了毎にカウント
+  // 画像ロード完了毎にカウント（成功・失敗どちらも）
   const handleImageLoad = () => {
-    setLoadedCount((prev) => prev + 1);
+    setLoadedCount(prev => prev + 1);
   };
 
   // ロード進捗 (0~100)
@@ -40,49 +40,39 @@ export default function PhotoGrid({ images }) {
   }, [isLoading]);
 
   const overlayClass = fadeOut
-    ? "opacity-0 transition-opacity duration-500"
-    : "opacity-100";
+    ? 'opacity-0 transition-opacity duration-500'
+    : 'opacity-100';
   const contentClass = fadeOut
-    ? "opacity-100 transition-opacity duration-500"
-    : "opacity-0";
+    ? 'opacity-100 transition-opacity duration-500'
+    : 'opacity-0';
 
   // モーダル表示用
   const [modalOpen, setModalOpen] = useState(false);
-  const [selectedSrc, setSelectedSrc] = useState("");
+  const [selectedSrc, setSelectedSrc] = useState('');
 
-  const handleOpenModal = (src) => {
+  const handleOpenModal = src => {
     setSelectedSrc(src);
     setModalOpen(true);
   };
   const handleCloseModal = () => {
-    setSelectedSrc("");
+    setSelectedSrc('');
     setModalOpen(false);
   };
 
   // 外部リンク用
-  const handleOpenPost = (postUrl) => {
-    window.open(postUrl, "_blank");
+  const handleOpenPost = postUrl => {
+    window.open(postUrl, '_blank');
   };
 
   return (
     <div className="container mx-auto px-4 py-8">
       {isLoading && (
-        <div
-          className={
-            `fixed inset-0 z-50 flex flex-col items-center justify-center bg-black ${overlayClass}`
-          }
-        >
-          <span
-            className="text-white text-2xl mb-4"
-            style={{ fontFamily: "'Avenir Next', 'Yu Gothic', sans-serif" }}
-          >
+        <div className={`fixed inset-0 z-50 flex flex-col items-center justify-center bg-black ${overlayClass}`}>
+          <span className="text-white text-2xl mb-4" style={{ fontFamily: "'Avenir Next', 'Yu Gothic', sans-serif" }}>
             {progress}%
           </span>
           <div className="w-[500px] h-1 bg-black relative overflow-hidden">
-            <div
-              className="absolute left-0 top-0 h-full bg-white transition-all"
-              style={{ width: `${progress}%` }}
-            />
+            <div className="absolute left-0 top-0 h-full bg-white transition-all" style={{ width: `${progress}%` }} />
           </div>
         </div>
       )}
@@ -110,26 +100,10 @@ export default function PhotoGrid({ images }) {
       </div>
 
       {modalOpen && (
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-70"
-          onClick={handleCloseModal}
-        >
-          <div
-            className="relative max-w-[90%] max-h-[90%]"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <button
-              onClick={handleCloseModal}
-              className="absolute top-4 right-4 text-white text-2xl"
-            >
-              &times;
-            </button>
-            <img
-              src={selectedSrc}
-              alt=""
-              className="w-full h-full object-contain"
-              style={{ maxHeight: '90vh', maxWidth: '90vw' }}
-            />
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-70" onClick={handleCloseModal}>
+          <div className="relative max-w-[90%] max-h-[90%]" onClick={e => e.stopPropagation()}>
+            <button onClick={handleCloseModal} className="absolute top-4 right-4 text-white text-2xl">&times;</button>
+            <img src={selectedSrc} alt="" className="w-full h-full object-contain" style={{ maxHeight: '90vh', maxWidth: '90vw' }} />
           </div>
         </div>
       )}
