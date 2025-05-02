@@ -15,9 +15,9 @@ export default function Header() {
 
   return (
     <header className="bg-black border-b border-gray-600">
-      <nav className="container mx-auto flex items-center justify-between px-4 py-4">
+      <nav className="container mx-auto flex flex-wrap items-center justify-between px-4 py-4">
         {/* 左端: ロゴボタン (全画面共通) */}
-        <div className="flex items-center">
+        <div className="flex items-center flex-shrink-0">
           <Link
             href="/"
             className="group relative flex items-center px-4 py-2 text-white transition-colors duration-300 hover:bg-white hover:text-black"
@@ -36,26 +36,23 @@ export default function Header() {
         </div>
 
         {/* 中央～右: ナビリンク + SNSアイコン + ハンバーガ */}
-        <div className="flex items-center space-x-4">
-          {/* 大画面ナビ */}
-          <div className="hidden md:flex space-x-4">
+        <div className="flex items-center flex-wrap gap-4">
+          {/* 大画面ナビ + SNSアイコン */}
+          <div className="hidden md:flex md:flex-wrap md:gap-4 md:items-center">
             {navLinks.map(link => (
               <Link
                 key={link.href}
                 href={link.href}
-                className="px-4 py-2 text-white transition-colors duration-300 hover:bg-white hover:text-black"
+                className="px-4 py-2 text-white transition-colors duration-300 hover:bg-white hover:text-black whitespace-nowrap"
               >
                 {link.label}
               </Link>
             ))}
-          </div>
-
-          {/* SNSアイコン (デスクトップ) */}
-          <div className="hidden md:flex space-x-4">
-            <a href="https://twitter.com/your_x_profile" target="_blank" rel="noopener noreferrer">
+            {/* SNSアイコン (デスクトップ) */}
+            <a href="https://twitter.com/your_x_profile" target="_blank" rel="noopener noreferrer" className="px-2">
               <img src="/icons/x.png" alt="X" className="h-6 w-6" />
             </a>
-            <a href="https://instagram.com/your_instagram_profile" target="_blank" rel="noopener noreferrer">
+            <a href="https://instagram.com/your_instagram_profile" target="_blank" rel="noopener noreferrer" className="px-2">
               <img src="/icons/instagram.png" alt="Instagram" className="h-6 w-6" />
             </a>
           </div>
@@ -90,18 +87,17 @@ export default function Header() {
               {link.label}
             </Link>
           ))}
+          {/* モバイルメニュー: SNSアイコン （Contactの下） */}
+          <div className="pt-4 flex space-x-4">
+            <a href="https://twitter.com/your_x_profile" target="_blank" rel="noopener noreferrer">
+              <img src="/icons/x.png" alt="X" className="h-6 w-6" />
+            </a>
+            <a href="https://instagram.com/your_instagram_profile" target="_blank" rel="noopener noreferrer">
+              <img src="/icons/instagram.png" alt="Instagram" className="h-6 w-6" />
+            </a>
+          </div>
         </nav>
-        {/* モバイルメニュー下部: SNSアイコン （Contact真下） */}
-        <div className="mt-8 px-6 flex space-x-4">
-          <a href="https://twitter.com/your_x_profile" target="_blank" rel="noopener noreferrer">
-            <img src="/icons/x.png" alt="X" className="h-6 w-6" />
-          </a>
-          <a href="https://instagram.com/your_instagram_profile" target="_blank" rel="noopener noreferrer">
-            <img src="/icons/instagram.png" alt="Instagram" className="h-6 w-6" />
-          </a>
-        </div>
       </div>
-
     </header>
   );
 }
