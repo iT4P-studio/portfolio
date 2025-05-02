@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
 import ReactGA from "react-ga4";
 
-// セクションタイトル
+// 各セクションタイトル
 const sectionTitles = ["経歴", "撮影歴", "所有機材", "Links"];
 
 // ウィンドウ幅取得フック
@@ -20,7 +20,7 @@ function useWindowSize() {
   return width;
 }
 
-// 各セクションコンポーネント
+// ---------------- 各セクションコンポーネント ----------------
 function CareerSection() {
   const data = [
     ["2022/3", "広尾学園高等学校 医進・サイエンスコース 卒業"],
@@ -31,8 +31,8 @@ function CareerSection() {
     ["2026/3", "筑波大学 情報学群 知識情報・図書館学類 卒業（見込み）"],
   ];
   return (
-    <section className="p-4">
-      <h2 className="text-4xl font-bold mb-6 text-center">経歴</h2>
+    <div className="text-center">
+      <h2 className="text-4xl font-bold mb-6">経歴</h2>
       <table className="mx-auto w-full max-w-2xl text-lg">
         <tbody>
           {data.map(([t, e], i) => (
@@ -43,7 +43,7 @@ function CareerSection() {
           ))}
         </tbody>
       </table>
-    </section>
+    </div>
   );
 }
 
@@ -70,13 +70,13 @@ function HistorySection() {
     },
   ];
   return (
-    <section className="p-4">
-      <h2 className="text-4xl font-bold mb-6 text-center">撮影歴</h2>
+    <div className="text-center">
+      <h2 className="text-4xl font-bold mb-6">撮影歴</h2>
       <div className="mx-auto max-w-2xl">
         {groups.map((g, i) => (
           <div key={i} className="mb-8">
-            <h3 className="text-2xl font-semibold mb-2 text-center">{g.period}</h3>
-            <ul className="list-none text-center space-y-1">
+            <h3 className="text-2xl font-semibold mb-2 whitespace-nowrap">{g.period}</h3>
+            <ul className="list-none space-y-1">
               {g.items.map((item, j) => (
                 <li key={j}>{item}</li>
               ))}
@@ -84,7 +84,7 @@ function HistorySection() {
           </div>
         ))}
       </div>
-    </section>
+    </div>
   );
 }
 
@@ -105,38 +105,42 @@ function EquipmentSection() {
     { category: "自動車", items: ["GR86"] },
   ];
   return (
-    <section className="p-4">
-      <h2 className="text-4xl font-bold mb-6 text-center">所有機材</h2>
+    <div className="text-center">
+      <h2 className="text-4xl font-bold mb-6">所有機材</h2>
       {categories.map((c, i) => (
         <div key={i} className="mb-6">
-          <h3 className="text-2xl font-semibold mb-2 text-center whitespace-nowrap">{c.category}</h3>
-          <ul className="list-none text-center space-y-1">
+          <h3 className="text-2xl font-semibold mb-2 whitespace-nowrap">{c.category}</h3>
+          <ul className="list-none space-y-1">
             {c.items.map((it, j) => (
               <li key={j}>{it}</li>
             ))}
           </ul>
         </div>
       ))}
-    </section>
+    </div>
   );
 }
 
 function LinksSection() {
   const links = [
-    { href: "https://xn--19ja1fb.xn--q9jyb4c/#home", icon: "/images/icons/friend1.png", alt: "Friend1" },
-    { href: "https://iorin.io/", icon: "/images/icons/friend2.png", alt: "Friend2" },
+    { href: "https://xn--19ja1fb.xn--q9jyb4c/#home", icon: "/images/icons/ふわふわ.みんな.png" },
+    { href: "https://iorin.io/", icon: "/images/icons/iorin.io.png" },
   ];
   return (
-    <section className="p-4">
-      <h2 className="text-4xl font-bold mb-6 text-center">Links</h2>
+    <div className="text-center">
+      <h2 className="text-4xl font-bold mb-6">Links</h2>
       <div className="flex justify-center items-center gap-8">
-        {links.map((l, i) => (
-          <a key={i} href={l.href} target="_blank" rel="noopener noreferrer">
-            <Image src={l.icon} alt={l.alt} width={64} height={64} />
-          </a>
-        ))}
+        {links.map((l, i) => {
+          const filename = l.icon.split('/').pop().replace(/\.[^/.]+$/, '');
+          return (
+            <a key={i} href={l.href} target="_blank" rel="noopener noreferrer" className="flex flex-col items-center">
+              <Image src={l.icon} alt={filename} width={64} height={64} />
+              <span className="mt-2 text-sm text-gray-300">{filename}</span>
+            </a>
+          );
+        })}
       </div>
-    </section>
+    </div>
   );
 }
 
@@ -145,40 +149,29 @@ function DesktopView() {
   const [index, setIndex] = useState(0);
   const wheelLock = useRef(false);
 
-  // コンポーネント配列
   const sections = [
-    <CareerSection key="career" />, 
-    <HistorySection key="history" />, 
-    <EquipmentSection key="equipment" />, 
-    <LinksSection key="links" />
+    <CareerSection key="career" />,
+    <HistorySection key="history" />,
+    <EquipmentSection key="equipment" />,
+    <LinksSection key="links" />,
   ];
 
-  // Next & Prev コールバック
   const goNext = useCallback(
-    () => setIndex(i => Math.min(i + 1, sections.length - 1)),
+    () => setIndex((i) => Math.min(i + 1, sections.length - 1)),
     [sections.length]
   );
-  const goPrev = useCallback(
-    () => setIndex(i => Math.max(i - 1, 0)),
-    []
-  );
+  const goPrev = useCallback(() => setIndex((i) => Math.max(i - 1, 0)), []);
 
-  // Google Analytics 計測
   useEffect(() => {
     ReactGA.initialize("G-GVJZVJ676G");
     ReactGA.send("pageview");
   }, []);
 
-  // ホイール操作で次/前セクションへ
   useEffect(() => {
-    const onWheel = e => {
+    const onWheel = (e) => {
       e.preventDefault();
       if (wheelLock.current) return;
-      if (e.deltaY > 0) {
-        goNext();
-      } else {
-        goPrev();
-      }
+      if (e.deltaY > 0) goNext(); else goPrev();
       wheelLock.current = true;
       setTimeout(() => { wheelLock.current = false; }, 800);
     };
@@ -187,10 +180,7 @@ function DesktopView() {
   }, [goNext, goPrev]);
 
   return (
-    <main
-      className="relative bg-black text-white"
-      style={{ height: "calc(100vh - 60px)" }}
-    >
+    <main className="relative bg-black text-white" style={{ height: "calc(100vh - 60px)" }}>
       <AnimatePresence mode="wait">
         <motion.section
           key={index}
@@ -200,22 +190,32 @@ function DesktopView() {
           exit={{ opacity: 0 }}
           transition={{ duration: 0.7 }}
         >
-          {sections[index]}
+          <div className="flex flex-col items-center justify-center w-full">
+            {sections[index]}
+          </div>
         </motion.section>
       </AnimatePresence>
 
-      {/* サイドナビゲータ */}
-      <nav className="absolute right-4 top-1/2 transform -translate-y-1/2 flex flex-col space-y-4">
+      <nav className="absolute right-4 top-1/2 transform -translate-y-1/2 flex flex-col items-end space-y-4">
         {sectionTitles.map((t, i) => (
           <button
             key={i}
             onClick={() => setIndex(i)}
-            className="focus:outline-none"
+            className="flex items-center focus:outline-none"
           >
+            {index === i ? (
+              <motion.span
+                className="text-white mr-2"
+                animate={{ scale: 1.2 }}
+                transition={{ duration: 0.3 }}
+              >
+                {t}
+              </motion.span>
+            ) : (
+              <span className="text-gray-400 mr-2">{t}</span>
+            )}
             <span
-              className={`w-3 h-12 border border-white block ${
-                index === i ? "bg-white" : "bg-black"
-              }`}
+              className={`w-3 h-12 border border-white block ${index === i ? "bg-white" : "bg-black"}`}
             />
           </button>
         ))}

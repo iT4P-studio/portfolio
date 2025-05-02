@@ -38,7 +38,7 @@ export default function Header() {
         {/* 中央～右: ナビリンク + SNSアイコン + ハンバーガ */}
         <div className="flex items-center flex-wrap gap-4">
           {/* 大画面ナビ + SNSアイコン */}
-          <div className="hidden md:flex md:flex-wrap md:gap-4 md:items-center">
+          <div className="hidden lg:flex lg:flex-wrap lg:gap-4 lg:items-center">
             {navLinks.map(link => (
               <Link
                 key={link.href}
@@ -58,7 +58,7 @@ export default function Header() {
           </div>
 
           {/* モバイル用ハンバーガボタン */}
-          <button className="md:hidden" onClick={() => setMenuOpen(true)}>
+          <button className="lg:hidden" onClick={() => setMenuOpen(true)}>
             <img src="/menu-btn.png" alt="Menu" className="h-6 w-6" />
           </button>
         </div>
@@ -68,7 +68,7 @@ export default function Header() {
       <div
         className={`fixed top-0 left-0 z-50 h-screen w-3/4 bg-black transform transition-transform duration-300 ${
           menuOpen ? 'translate-x-0' : '-translate-x-full'
-        } md:hidden`}
+        } lg:hidden`}
       >
         <button className="absolute top-4 right-4 text-white text-2xl" onClick={() => setMenuOpen(false)}>
           ×
