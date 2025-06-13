@@ -94,7 +94,7 @@ function EquipmentSection() {
     {
       category: "レンズ",
       items: [
-        "Z24-70mm F4",
+        "Z24-70mm f/4 S",
         "Z70-200mm F2.8/S",
         "Z50mm f1.2/S",
         "Z26/2.8",
