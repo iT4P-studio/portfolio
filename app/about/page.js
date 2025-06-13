@@ -94,11 +94,11 @@ function EquipmentSection() {
     {
       category: "レンズ",
       items: [
-        "Z24-70mm f/4 S",
-        "Z70-200mm F2.8/S",
-        "Z50mm f1.2/S",
-        "Z26/2.8",
-        "Z テレコンバーター TC-2.0x",
+        "Z 24-70mm f/4 S",
+        "Z 70-200mm f/2.8 VR S",
+        "Z 50mm f/1.2 S",
+        "Z 26mm f/2.8",
+        "Z TELECONVERTER TC-2.0x",
         "AF-S Fisheye 8-15/3.5-4.5E",
       ],
     },
