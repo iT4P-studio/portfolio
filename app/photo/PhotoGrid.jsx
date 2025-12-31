@@ -58,6 +58,7 @@ export default function PhotoGrid({ images }) {
   const [selectedSrc, setSelectedSrc] = useState('');
   const [selectedExif, setSelectedExif] = useState(null);
   const [modalImageReady, setModalImageReady] = useState(false);
+  const [modalExifReady, setModalExifReady] = useState(false);
   const attemptedModalRef = useRef(new Set());
 
   useEffect(() => {
@@ -119,6 +120,7 @@ export default function PhotoGrid({ images }) {
   const modalShutter = selectedExif?.shutterSpeed;
   const modalIso = selectedExif?.iso;
   const modalIris = formatIris(selectedExif?.aperture);
+  const modalReady = modalImageReady && modalExifReady;
 
   // 画像ロード完了毎にカウント（成功・失敗どちらも）
   const handleImageLoad = () => {
@@ -169,18 +171,27 @@ export default function PhotoGrid({ images }) {
     setSelectedSrc(src);
     setSelectedExif(cachedExif);
     setModalImageReady(false);
+    setModalExifReady(!!cachedExif);
     setModalOpen(true);
   };
   const handleCloseModal = () => {
     setSelectedSrc('');
     setSelectedExif(null);
     setModalImageReady(false);
+    setModalExifReady(false);
     setModalOpen(false);
   };
 
   useEffect(() => {
-    if (!modalOpen || !selectedSrc || selectedExif) return;
-    if (!selectedSrc.startsWith('/photos/')) return;
+    if (!modalOpen || !selectedSrc) return;
+    if (selectedExif) {
+      if (!modalExifReady) setModalExifReady(true);
+      return;
+    }
+    if (!selectedSrc.startsWith('/photos/')) {
+      if (!modalExifReady) setModalExifReady(true);
+      return;
+    }
     if (attemptedModalRef.current.has(selectedSrc)) return;
     attemptedModalRef.current.add(selectedSrc);
     let cancelled = false;
@@ -192,10 +203,12 @@ export default function PhotoGrid({ images }) {
         const info = buildExifInfo(raw);
         if (!cancelled) {
           setSelectedExif(info);
+          setModalExifReady(true);
         }
       } catch {
         if (!cancelled) {
           setSelectedExif(null);
+          setModalExifReady(true);
         }
       }
     };
@@ -205,7 +218,7 @@ export default function PhotoGrid({ images }) {
     return () => {
       cancelled = true;
     };
-  }, [modalOpen, selectedSrc, selectedExif]);
+  }, [modalOpen, selectedSrc, selectedExif, modalExifReady]);
 
   // 外部リンク用
   const handleOpenPost = postUrl => {
@@ -282,12 +295,23 @@ export default function PhotoGrid({ images }) {
               <img
                 src={selectedSrc}
                 alt=""
-                className="w-full h-full object-contain"
+                className={`w-full h-full object-contain transition-opacity duration-300 ${modalReady ? 'opacity-100' : 'opacity-0'}`}
                 style={{ maxHeight: '90vh', maxWidth: '90vw' }}
                 onLoad={() => setModalImageReady(true)}
                 onError={() => setModalImageReady(true)}
               />
-              {selectedExif && modalImageReady && (
+              <div
+                className={`absolute inset-0 flex flex-col items-center justify-center gap-3 transition-opacity duration-300 ${
+                  modalReady ? 'opacity-0 pointer-events-none' : 'opacity-100'
+                }`}
+                aria-hidden={modalReady}
+              >
+                <div className="text-[11px] uppercase tracking-[0.45em] text-gray-200">Loading</div>
+                <div className="h-px w-28 overflow-hidden bg-white/25">
+                  <div className="h-px w-1/2 bg-white/80 animate-pulse" />
+                </div>
+              </div>
+              {selectedExif && modalReady && (
                 <div className="pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 via-black/50 to-transparent px-4 pb-4 pt-10">
                   <div className="flex flex-wrap gap-x-4 gap-y-2 text-xs text-gray-100 leading-relaxed">
                     {modalShotDate && <span>撮影日：{modalShotDate}</span>}
