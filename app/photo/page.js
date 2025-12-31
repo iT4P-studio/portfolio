@@ -2,12 +2,32 @@
 import fs from "fs";
 import path from "path";
 import exifr from "exifr";
-import { EXIF_PICK_FIELDS, buildExifInfo, getShotTimestamp } from "./exifFormat";
+import { EXIF_PICK_FIELDS, buildExifInfo, formatDate, getShotTimestamp } from "./exifFormat";
 import xPhotosData from "./xPhotosData";
 import PhotoGrid from "./PhotoGrid";
 
+export const runtime = "nodejs";
+
+const TWITTER_EPOCH_MS = 1288834974657n;
+
+const extractStatusId = (postUrl) => {
+  if (typeof postUrl !== "string") return null;
+  const match = postUrl.match(/status\/(\d+)/);
+  return match ? match[1] : null;
+};
+
+const getTweetDateFromId = (id) => {
+  try {
+    const snowflake = BigInt(id);
+    const timestamp = Number((snowflake >> 22n) + TWITTER_EPOCH_MS);
+    return Number.isFinite(timestamp) ? new Date(timestamp) : null;
+  } catch {
+    return null;
+  }
+};
+
 export default async function PhotoPage() {
-  // 1) public/photos からローカル画像を取得し、作成日時(>変更日時)で新しい順に並べ替え
+  // 1) public/photos からローカル画像を取得し、撮影日(EXIF)で新しい順に並べ替え
   const photosDir = path.join(process.cwd(), "public", "photos");
   const allFiles = fs.existsSync(photosDir) ? fs.readdirSync(photosDir) : [];
 
@@ -20,13 +40,6 @@ export default async function PhotoPage() {
   const localWithTime = await Promise.all(
     imageFiles.map(async (file) => {
       const full = path.join(photosDir, file);
-      const stat = fs.statSync(full);
-      const fallbackTs =
-        Number(stat.birthtimeMs) ||
-        Number(stat.ctimeMs) ||
-        Number(stat.mtimeMs) ||
-        0;
-
       let shotTs = 0;
       let exifInfo = null;
       try {
@@ -40,7 +53,7 @@ export default async function PhotoPage() {
         exifInfo = null;
       }
 
-      const ts = Number.isFinite(shotTs) && shotTs > 0 ? shotTs : fallbackTs;
+      const ts = Number.isFinite(shotTs) && shotTs > 0 ? shotTs : 0;
 
       return {
         src: `/photos/${file}`,
@@ -55,39 +68,39 @@ export default async function PhotoPage() {
     const base = { src: item.src, isLocal: item.isLocal };
     if (item.postUrl) base.postUrl = item.postUrl;
     if (item.exif) base.exif = item.exif;
+    if (item.publishedDate) base.publishedDate = item.publishedDate;
+    if (Number.isFinite(item._ts) && item._ts > 0) base.sortTs = item._ts;
     return base;
   };
 
-  // 作成(更新)日時が新しい順へ
-  const localSorted = localWithTime
+  // 2) X画像（投稿日は投稿IDから算出）
+  const xWithTime = await Promise.all(
+    xPhotosData.map(async (item) => {
+      let postedDate = item.postedAt ? new Date(item.postedAt) : null;
+      if (!postedDate || Number.isNaN(postedDate.getTime())) {
+        const statusId = extractStatusId(item.postUrl);
+        postedDate = statusId ? getTweetDateFromId(statusId) : null;
+      }
+
+      const ts =
+        postedDate && Number.isFinite(postedDate.getTime())
+          ? postedDate.getTime()
+          : 0;
+
+      return {
+        src: item.imageUrl,
+        isLocal: false,
+        postUrl: item.postUrl,
+        publishedDate: postedDate ? formatDate(postedDate) : null,
+        _ts: ts,
+      };
+    })
+  );
+
+  // 3) 撮影日 / 投稿日の新しい順へ
+  const allImages = [...localWithTime, ...xWithTime]
     .sort((a, b) => b._ts - a._ts)
     .map(stripTimestamp);
-
-  // 2) X画像（任意で postedAt があればそれも使って並べ替え可能）
-  const xWithTime = xPhotosData.map((item) => ({
-    src: item.imageUrl,
-    isLocal: false,
-    postUrl: item.postUrl,
-    _ts: item.postedAt ? new Date(item.postedAt).getTime() : Number.NEGATIVE_INFINITY,
-  }));
-
-  // 3) 結合。postedAt が全件にあるならまとめて日付ソート、無ければ従来どおりローカル→Xの順
-  let allImages = [];
-  const canMergeByTime = xWithTime.every((x) => Number.isFinite(x._ts));
-
-  if (canMergeByTime) {
-    // ローカル側にも _ts を持たせて混ぜてソート
-    const localWithTsAgain = localWithTime; // すでに _ts を保持済み
-    allImages = [...localWithTsAgain, ...xWithTime]
-      .sort((a, b) => b._ts - a._ts)
-      .map(stripTimestamp);
-  } else {
-    // X 側の日時情報が無いので、ローカルだけ時系列、X は元の順で後ろに付与
-    allImages = [
-      ...localSorted,
-      ...xWithTime.map(stripTimestamp),
-    ];
-  }
 
   return (
     <div>

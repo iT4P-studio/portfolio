@@ -40,6 +40,16 @@ const formatCamera = (make, model) => {
   return `${cleanMake} ${cleanModel}`;
 };
 
+const formatDate = (value) => {
+  if (!value) return null;
+  const date = value instanceof Date ? value : new Date(value);
+  if (Number.isNaN(date.getTime())) return null;
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  return `${year}/${month}/${day}`;
+};
+
 const getShotTimestamp = (exif) => {
   const shotDate = exif?.DateTimeOriginal || exif?.CreateDate;
   return shotDate ? new Date(shotDate).getTime() : 0;
@@ -47,14 +57,16 @@ const getShotTimestamp = (exif) => {
 
 const buildExifInfo = (exif) => {
   if (!exif) return null;
+  const shotDate = formatDate(exif.DateTimeOriginal || exif.CreateDate);
   const camera = formatCamera(exif.Make, exif.Model);
   const lens = typeof exif.LensModel === "string" ? exif.LensModel.trim() : null;
   const shutterSpeed = formatExposureTime(exif.ExposureTime);
   const aperture = formatAperture(exif.FNumber);
   const iso = formatISO(exif.ISO ?? exif.ISOSpeed);
 
-  if (!camera && !lens && !shutterSpeed && !aperture && !iso) return null;
+  if (!shotDate && !camera && !lens && !shutterSpeed && !aperture && !iso) return null;
   return {
+    shotDate,
     camera,
     lens,
     shutterSpeed,
@@ -75,4 +87,4 @@ const EXIF_PICK_FIELDS = [
   "ISOSpeed",
 ];
 
-export { EXIF_PICK_FIELDS, buildExifInfo, getShotTimestamp };
+export { EXIF_PICK_FIELDS, buildExifInfo, formatDate, getShotTimestamp };
