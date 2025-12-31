@@ -4,9 +4,6 @@ import React, { useState, useEffect, useMemo, useRef } from 'react';
 import PhotoCard from '../components/PhotoCard';
 import { EXIF_PICK_FIELDS, buildExifInfo } from './exifFormat';
 
-const PRELOAD_COUNT = 6;
-const MOBILE_PRELOAD_COUNT = 2;
-
 export default function PhotoGrid({ images }) {
   const parseDateText = (value) => {
     if (!value) return 0;
@@ -50,7 +47,6 @@ export default function PhotoGrid({ images }) {
 
   const [sortVersion, setSortVersion] = useState(0);
   const exifCacheRef = useRef(new Map());
-  const [preloadCount, setPreloadCount] = useState(MOBILE_PRELOAD_COUNT);
   const [isMobile, setIsMobile] = useState(false);
 
   // モーダル表示用
@@ -73,9 +69,7 @@ export default function PhotoGrid({ images }) {
     if (typeof window === 'undefined') return;
     const media = window.matchMedia('(max-width: 640px)');
     const update = () => {
-      const mobile = media.matches;
-      setIsMobile(mobile);
-      setPreloadCount(mobile ? MOBILE_PRELOAD_COUNT : PRELOAD_COUNT);
+      setIsMobile(media.matches);
     };
     update();
     media.addEventListener('change', update);
@@ -110,7 +104,7 @@ export default function PhotoGrid({ images }) {
       .map(({ item }) => item);
   }, [images, sortVersion]);
 
-  const totalImages = Math.min(sortedImages.length, preloadCount);
+  const totalImages = sortedImages.length;
   const [loadedCount, setLoadedCount] = useState(0);
   const [isLoading, setIsLoading] = useState(totalImages > 0);
   const [fadeOut, setFadeOut] = useState(false);
@@ -247,10 +241,7 @@ export default function PhotoGrid({ images }) {
 
       <div className={contentClass}>
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-          {sortedImages.map((item, idx) => {
-            const shouldPreload = idx < preloadCount;
-            const loading = shouldPreload ? 'eager' : 'lazy';
-            const onImageLoad = shouldPreload ? handleImageLoad : undefined;
+          {sortedImages.map((item) => {
             const displaySrc = getDisplaySrc(item);
             return item.isLocal ? (
               <PhotoCard
@@ -258,11 +249,10 @@ export default function PhotoGrid({ images }) {
                 src={displaySrc}
                 exifKey={item.src}
                 exif={item.exif}
-                loading={loading}
-                deferUntilVisible
-                enableClientExif={false}
+                loading="eager"
+                priority
                 onClick={(resolvedExif) => handleOpenModal(item.src, resolvedExif || item.exif)}
-                onImageLoad={onImageLoad}
+                onImageLoad={handleImageLoad}
                 onExifResolved={handleExifResolved}
               />
             ) : (
@@ -270,11 +260,10 @@ export default function PhotoGrid({ images }) {
                 key={item.src}
                 src={item.src}
                 dateText={item.publishedDate}
-                loading={loading}
-                deferUntilVisible
-                enableClientExif={false}
+                loading="eager"
+                priority
                 onClick={() => handleOpenPost(item.postUrl)}
-                onImageLoad={onImageLoad}
+                onImageLoad={handleImageLoad}
               />
             );
           })}
@@ -287,7 +276,7 @@ export default function PhotoGrid({ images }) {
             <button
               onClick={handleCloseModal}
               aria-label="Close"
-              className="absolute top-4 right-4 z-20 flex h-10 w-10 items-center justify-center rounded bg-gray-700/80 text-white text-2xl leading-none hover:bg-gray-600 transition-colors"
+              className={`absolute top-4 right-4 z-20 flex h-10 w-10 items-center justify-center rounded bg-gray-700/80 text-white text-2xl leading-none transition-opacity duration-300 ${modalReady ? 'opacity-100' : 'opacity-0 pointer-events-none'} hover:bg-gray-600`}
             >
               &times;
             </button>
