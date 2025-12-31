@@ -4,12 +4,20 @@ import React from "react";
 
 /**
  * MovieWorksページ
- * - 幅が狭いと1列, lg以上で2列
+ * - 一覧は区切り線で分ける
+ * - 余裕がある場合は2段組で表示
  * - 日付を「タイトルの上」に表示 (小文字)
  * - タイトルは1行に収める (whitespace-nowrap)
  */
 
 export default function MovieWorksPage() {
+  const featured = {
+    date: "2025/06/11",
+    title: "UNIKP 2025 Vol.12 関東予選",
+    embedUrl: "https://player.vimeo.com/video/1092752130?h=d5733889f3&title=0&byline=0&portrait=0",
+    caption: "2025/6/11に行われた「UNIKP 2025 Vol.12 関東予選」のダイジェスト映像です。撮影と編集を担当しています。",
+  };
+
   // タイトル + 日付 + 埋め込み(動画/画像) + caption
   const items = [
     {
@@ -77,18 +85,40 @@ export default function MovieWorksPage() {
         {"本ページではクライアント様より直接ご依頼をいただいた案件のみを掲載しております。"}
       </p>
 
-      {/* 1列 → lg(1024px)以上で2列 */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        {items.map((item, idx) => (
-          <MediaItem
-            key={idx}
-            date={item.date}
-            title={item.title}
-            type={item.type}
-            embedUrl={item.embedUrl}
-            caption={item.caption}
+      <div className="border-t border-gray-700/60">
+        <div className="border-b border-gray-700/60 py-10">
+          <FeaturedItem
+            date={featured.date}
+            title={featured.title}
+            embedUrl={featured.embedUrl}
+            caption={featured.caption}
           />
-        ))}
+        </div>
+
+        <div className="lg:grid lg:grid-cols-2">
+          {items.map((item, idx) => {
+            const isRight = idx % 2 === 1;
+            const hasTopBorder = idx > 0;
+            const topBorderClass = hasTopBorder ? "border-t" : "";
+            const lgTopBorderReset = idx === 1 ? "lg:border-t-0" : "";
+            const columnBorderClass = isRight ? "lg:border-l lg:pl-8" : "lg:pr-8";
+
+            return (
+              <div
+                key={idx}
+                className={`py-8 border-gray-700/60 ${topBorderClass} ${lgTopBorderReset} ${columnBorderClass}`}
+              >
+                <MediaItem
+                  date={item.date}
+                  title={item.title}
+                  type={item.type}
+                  embedUrl={item.embedUrl}
+                  caption={item.caption}
+                />
+              </div>
+            );
+          })}
+        </div>
       </div>
     </div>
   );
@@ -97,26 +127,27 @@ export default function MovieWorksPage() {
 /** 各作品カード: 日付(小文字) + タイトル(1行) + [左: 埋め込み, 右: キャプション] */
 function MediaItem({ date, title, type, embedUrl, caption }) {
   return (
-    <div className="bg-black border border-gray-600 p-4 rounded-lg">
+    <div className="flex flex-col gap-4 sm:gap-6">
       {/* 日付をタイトルの上に表示 (小文字) */}
-      <div className="text-sm text-gray-400 mb-1 whitespace-nowrap overflow-hidden text-ellipsis">
-        {date}
-      </div>
+      <div>
+        <div className="text-xs text-gray-400 tracking-[0.2em] whitespace-nowrap overflow-hidden text-ellipsis">
+          {date}
+        </div>
 
-      {/* タイトル(1行) */}
-      <h2
-        className="
-          text-2xl font-semibold
-          block max-w-full
-          whitespace-nowrap 
-          overflow-hidden 
-          text-ellipsis
-          mb-2
-        "
-        style={{ lineHeight: "1.2" }}
-      >
-        {title}
-      </h2>
+        {/* タイトル(1行) */}
+        <h2
+          className="
+            text-2xl sm:text-3xl font-semibold tracking-tight
+            block max-w-full
+            whitespace-nowrap 
+            overflow-hidden 
+            text-ellipsis
+          "
+          style={{ lineHeight: "1.2" }}
+        >
+          {title}
+        </h2>
+      </div>
 
       {/* 左: メディア(幅300×高さ169) + 右: キャプション */}
       <div className="flex flex-col sm:flex-row items-start gap-4">
@@ -128,7 +159,7 @@ function MediaItem({ date, title, type, embedUrl, caption }) {
           )}
         </div>
         <div className="flex-1">
-          <p className="text-gray-200 text-sm sm:text-base leading-relaxed">
+          <p className="text-gray-300 text-sm sm:text-base leading-relaxed">
             {caption}
           </p>
         </div>
@@ -137,7 +168,29 @@ function MediaItem({ date, title, type, embedUrl, caption }) {
   );
 }
 
-/** 動画埋め込み(iframe) - 300×169 */
+/** 先頭の注目作品カード（大きめ表示） */
+function FeaturedItem({ date, title, embedUrl, caption }) {
+  return (
+    <div className="flex flex-col gap-4 sm:gap-6">
+      <div>
+        <div className="text-xs text-gray-400 tracking-[0.2em] whitespace-nowrap overflow-hidden text-ellipsis">
+          {date}
+        </div>
+        <h2 className="text-3xl sm:text-4xl font-semibold tracking-tight">
+          {title}
+        </h2>
+      </div>
+      <div className="w-full aspect-video relative overflow-hidden rounded-lg mb-4">
+        <VideoEmbed embedUrl={embedUrl} title={title} />
+      </div>
+      <p className="text-gray-300 text-sm sm:text-base leading-relaxed">
+        {caption}
+      </p>
+    </div>
+  );
+}
+
+/** 動画埋め込み(iframe) */
 function VideoEmbed({ embedUrl, title }) {
   return (
     <iframe

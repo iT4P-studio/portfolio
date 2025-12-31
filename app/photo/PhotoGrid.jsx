@@ -1,7 +1,8 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import PhotoCard from '../components/PhotoCard';
+import { EXIF_PICK_FIELDS, buildExifInfo } from './exifFormat';
 
 export default function PhotoGrid({ images }) {
   const totalImages = images.length;
@@ -52,15 +53,48 @@ export default function PhotoGrid({ images }) {
   // モーダル表示用
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedSrc, setSelectedSrc] = useState('');
+  const [selectedExif, setSelectedExif] = useState(null);
+  const attemptedModalRef = useRef(new Set());
 
-  const handleOpenModal = src => {
+  const handleOpenModal = (src, exif) => {
     setSelectedSrc(src);
+    setSelectedExif(exif || null);
     setModalOpen(true);
   };
   const handleCloseModal = () => {
     setSelectedSrc('');
+    setSelectedExif(null);
     setModalOpen(false);
   };
+
+  useEffect(() => {
+    if (!modalOpen || !selectedSrc || selectedExif) return;
+    if (!selectedSrc.startsWith('/photos/')) return;
+    if (attemptedModalRef.current.has(selectedSrc)) return;
+    attemptedModalRef.current.add(selectedSrc);
+    let cancelled = false;
+
+    const loadExif = async () => {
+      try {
+        const { default: exifr } = await import('exifr');
+        const raw = await exifr.parse(selectedSrc, { pick: EXIF_PICK_FIELDS });
+        const info = buildExifInfo(raw);
+        if (!cancelled) {
+          setSelectedExif(info);
+        }
+      } catch {
+        if (!cancelled) {
+          setSelectedExif(null);
+        }
+      }
+    };
+
+    loadExif();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [modalOpen, selectedSrc, selectedExif]);
 
   // 外部リンク用
   const handleOpenPost = postUrl => {
@@ -87,7 +121,8 @@ export default function PhotoGrid({ images }) {
               <PhotoCard
                 key={idx}
                 src={item.src}
-                onClick={() => handleOpenModal(item.src)}
+                exif={item.exif}
+                onClick={() => handleOpenModal(item.src, item.exif)}
                 onImageLoad={handleImageLoad}
               />
             ) : (
@@ -105,8 +140,27 @@ export default function PhotoGrid({ images }) {
       {modalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-70" onClick={handleCloseModal}>
           <div className="relative max-w-[90%] max-h-[90%]" onClick={e => e.stopPropagation()}>
-            <button onClick={handleCloseModal} className="absolute top-4 right-4 text-white text-2xl">&times;</button>
-            <img src={selectedSrc} alt="" className="w-full h-full object-contain" style={{ maxHeight: '90vh', maxWidth: '90vw' }} />
+            <button
+              onClick={handleCloseModal}
+              aria-label="Close"
+              className="absolute top-4 right-4 z-20 flex h-10 w-10 items-center justify-center rounded bg-gray-700/80 text-white text-2xl leading-none hover:bg-gray-600 transition-colors"
+            >
+              &times;
+            </button>
+            <div className="relative">
+              <img src={selectedSrc} alt="" className="w-full h-full object-contain" style={{ maxHeight: '90vh', maxWidth: '90vw' }} />
+              {selectedExif && (
+                <div className="pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 via-black/50 to-transparent px-4 pb-4 pt-10">
+                  <div className="flex flex-wrap gap-x-4 gap-y-2 text-xs text-gray-100 leading-relaxed">
+                    {selectedExif.camera && <span>カメラ: {selectedExif.camera}</span>}
+                    {selectedExif.lens && <span>レンズ: {selectedExif.lens}</span>}
+                    {selectedExif.shutterSpeed && <span>シャッタースピード: {selectedExif.shutterSpeed}</span>}
+                    {selectedExif.aperture && <span>F値: {selectedExif.aperture}</span>}
+                    {selectedExif.iso && <span>ISO感度: {selectedExif.iso}</span>}
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
         </div>
       )}

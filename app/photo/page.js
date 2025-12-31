@@ -1,10 +1,12 @@
 // app/photo/page.js
 import fs from "fs";
 import path from "path";
+import exifr from "exifr";
+import { EXIF_PICK_FIELDS, buildExifInfo, getShotTimestamp } from "./exifFormat";
 import xPhotosData from "./xPhotosData";
 import PhotoGrid from "./PhotoGrid";
 
-export default function PhotoPage() {
+export default async function PhotoPage() {
   // 1) public/photos からローカル画像を取得し、作成日時(>変更日時)で新しい順に並べ替え
   const photosDir = path.join(process.cwd(), "public", "photos");
   const allFiles = fs.existsSync(photosDir) ? fs.readdirSync(photosDir) : [];
@@ -15,25 +17,45 @@ export default function PhotoPage() {
   });
 
   // birthtimeMs が無い環境もあるので ctimeMs / mtimeMs をフォールバック
-  const localWithTime = imageFiles.map((file) => {
-    const full = path.join(photosDir, file);
-    const stat = fs.statSync(full);
-    const ts =
-      Number(stat.birthtimeMs) ||
-      Number(stat.ctimeMs) ||
-      Number(stat.mtimeMs) ||
-      0;
+  const localWithTime = await Promise.all(
+    imageFiles.map(async (file) => {
+      const full = path.join(photosDir, file);
+      const stat = fs.statSync(full);
+      const fallbackTs =
+        Number(stat.birthtimeMs) ||
+        Number(stat.ctimeMs) ||
+        Number(stat.mtimeMs) ||
+        0;
 
-    return {
-      src: `/photos/${file}`,
-      isLocal: true,
-      _ts: ts,
-    };
-  });
+      let shotTs = 0;
+      let exifInfo = null;
+      try {
+        const exif = await exifr.parse(full, {
+          pick: EXIF_PICK_FIELDS,
+        });
+        shotTs = getShotTimestamp(exif);
+        exifInfo = buildExifInfo(exif);
+      } catch {
+        shotTs = 0;
+        exifInfo = null;
+      }
+
+      const ts = Number.isFinite(shotTs) && shotTs > 0 ? shotTs : fallbackTs;
+
+      return {
+        src: `/photos/${file}`,
+        isLocal: true,
+        _ts: ts,
+        exif: exifInfo,
+      };
+    })
+  );
 
   const stripTimestamp = (item) => {
     const base = { src: item.src, isLocal: item.isLocal };
-    return item.postUrl ? { ...base, postUrl: item.postUrl } : base;
+    if (item.postUrl) base.postUrl = item.postUrl;
+    if (item.exif) base.exif = item.exif;
+    return base;
   };
 
   // 作成(更新)日時が新しい順へ
