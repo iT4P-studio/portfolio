@@ -76,6 +76,7 @@ const buildExifInfo = (exif) => {
   if (!exif) return null;
   const shotDate = formatDate(exif.DateTimeOriginal || exif.CreateDate);
   const camera = formatCamera(exif.Make, exif.Model);
+  const cameraModel = typeof exif.Model === "string" ? exif.Model.trim() : null;
   const lens = typeof exif.LensModel === "string" ? exif.LensModel.trim() : null;
   const shutterSpeed = formatExposureTime(exif.ExposureTime);
   const aperture = formatAperture(exif.FNumber);
@@ -85,6 +86,7 @@ const buildExifInfo = (exif) => {
   return {
     shotDate,
     camera,
+    cameraModel,
     lens,
     shutterSpeed,
     aperture,

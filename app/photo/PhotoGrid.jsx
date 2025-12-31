@@ -25,6 +25,26 @@ export default function PhotoGrid({ images }) {
     return Number.isNaN(parsed.getTime()) ? 0 : parsed.getTime();
   };
 
+  const formatModalDate = (value) => {
+    if (!value) return null;
+    const ts = parseDateText(value);
+    if (!ts) return value;
+    const date = new Date(ts);
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  };
+
+  const formatIris = (value) => {
+    if (value === null || value === undefined) return null;
+    const text = String(value).trim();
+    if (!text) return null;
+    const cleaned = text.replace(/^f\/?/i, '');
+    if (!cleaned) return null;
+    return `F${cleaned}`;
+  };
+
   const [sortVersion, setSortVersion] = useState(0);
   const exifCacheRef = useRef(new Map());
 
@@ -74,6 +94,12 @@ export default function PhotoGrid({ images }) {
   const [loadedCount, setLoadedCount] = useState(0);
   const [isLoading, setIsLoading] = useState(totalImages > 0);
   const [fadeOut, setFadeOut] = useState(false);
+  const modalShotDate = selectedExif?.shotDate ? formatModalDate(selectedExif.shotDate) : null;
+  const modalCamera = selectedExif?.cameraModel || selectedExif?.camera;
+  const modalLens = selectedExif?.lens;
+  const modalShutter = selectedExif?.shutterSpeed;
+  const modalIso = selectedExif?.iso;
+  const modalIris = formatIris(selectedExif?.aperture);
 
   // 画像ロード完了毎にカウント（成功・失敗どちらも）
   const handleImageLoad = () => {
@@ -214,12 +240,12 @@ export default function PhotoGrid({ images }) {
               {selectedExif && (
                 <div className="pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 via-black/50 to-transparent px-4 pb-4 pt-10">
                   <div className="flex flex-wrap gap-x-4 gap-y-2 text-xs text-gray-100 leading-relaxed">
-                    {selectedExif.shotDate && <span>撮影日: {selectedExif.shotDate}</span>}
-                    {selectedExif.camera && <span>カメラ: {selectedExif.camera}</span>}
-                    {selectedExif.lens && <span>レンズ: {selectedExif.lens}</span>}
-                    {selectedExif.shutterSpeed && <span>シャッタースピード: {selectedExif.shutterSpeed}</span>}
-                    {selectedExif.aperture && <span>F値: {selectedExif.aperture}</span>}
-                    {selectedExif.iso && <span>ISO感度: {selectedExif.iso}</span>}
+                    {modalShotDate && <span>撮影日：{modalShotDate}</span>}
+                    {modalCamera && <span>カメラ：{modalCamera}</span>}
+                    {modalLens && <span>レンズ：{modalLens}</span>}
+                    {modalShutter && <span>SS：{modalShutter}</span>}
+                    {modalIso && <span>ISO：{modalIso}</span>}
+                    {modalIris && <span>IRIS：{modalIris}</span>}
                   </div>
                 </div>
               )}
