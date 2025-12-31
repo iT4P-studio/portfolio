@@ -40,10 +40,26 @@ const formatCamera = (make, model) => {
   return `${cleanMake} ${cleanModel}`;
 };
 
-const formatDate = (value) => {
+const parseExifDate = (value) => {
   if (!value) return null;
-  const date = value instanceof Date ? value : new Date(value);
-  if (Number.isNaN(date.getTime())) return null;
+  if (value instanceof Date) return value;
+  if (typeof value === "number" && Number.isFinite(value)) return new Date(value);
+  if (typeof value !== "string") return null;
+  const trimmed = value.trim();
+  if (!trimmed) return null;
+  const match = trimmed.match(/^(\d{4})[/:\\-](\d{2})[/:\\-](\d{2})(?:[ T](\d{2}):(\d{2}):(\d{2}))?/);
+  if (match) {
+    const [, y, m, d, hh = "00", mm = "00", ss = "00"] = match;
+    const parsed = new Date(Number(y), Number(m) - 1, Number(d), Number(hh), Number(mm), Number(ss));
+    return Number.isNaN(parsed.getTime()) ? null : parsed;
+  }
+  const parsed = new Date(trimmed);
+  return Number.isNaN(parsed.getTime()) ? null : parsed;
+};
+
+const formatDate = (value) => {
+  const date = parseExifDate(value);
+  if (!date) return null;
   const year = date.getFullYear();
   const month = String(date.getMonth() + 1).padStart(2, "0");
   const day = String(date.getDate()).padStart(2, "0");
@@ -52,7 +68,8 @@ const formatDate = (value) => {
 
 const getShotTimestamp = (exif) => {
   const shotDate = exif?.DateTimeOriginal || exif?.CreateDate;
-  return shotDate ? new Date(shotDate).getTime() : 0;
+  const date = parseExifDate(shotDate);
+  return date ? date.getTime() : 0;
 };
 
 const buildExifInfo = (exif) => {

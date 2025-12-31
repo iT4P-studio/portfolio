@@ -8,6 +8,19 @@ import PhotoGrid from "./PhotoGrid";
 
 export const runtime = "nodejs";
 
+const getExifrParser = async () => {
+  if (exifr?.parse) return exifr.parse;
+  if (exifr?.default?.parse) return exifr.default.parse;
+  try {
+    const mod = await import("exifr");
+    if (mod?.parse) return mod.parse;
+    if (mod?.default?.parse) return mod.default.parse;
+  } catch {
+    return null;
+  }
+  return null;
+};
+
 const TWITTER_EPOCH_MS = 1288834974657n;
 
 const extractStatusId = (postUrl) => {
@@ -30,6 +43,7 @@ export default async function PhotoPage() {
   // 1) public/photos からローカル画像を取得し、撮影日(EXIF)で新しい順に並べ替え
   const photosDir = path.join(process.cwd(), "public", "photos");
   const allFiles = fs.existsSync(photosDir) ? fs.readdirSync(photosDir) : [];
+  const exifrParse = await getExifrParser();
 
   const imageFiles = allFiles.filter((file) => {
     const ext = path.extname(file).toLowerCase();
@@ -43,11 +57,13 @@ export default async function PhotoPage() {
       let shotTs = 0;
       let exifInfo = null;
       try {
-        const exif = await exifr.parse(full, {
-          pick: EXIF_PICK_FIELDS,
-        });
-        shotTs = getShotTimestamp(exif);
-        exifInfo = buildExifInfo(exif);
+        if (exifrParse) {
+          const exif = await exifrParse(full, {
+            pick: EXIF_PICK_FIELDS,
+          });
+          shotTs = getShotTimestamp(exif);
+          exifInfo = buildExifInfo(exif);
+        }
       } catch {
         shotTs = 0;
         exifInfo = null;

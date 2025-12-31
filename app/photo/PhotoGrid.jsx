@@ -7,13 +7,50 @@ import { EXIF_PICK_FIELDS, buildExifInfo } from './exifFormat';
 export default function PhotoGrid({ images }) {
   const parseDateText = (value) => {
     if (!value) return 0;
-    const match = typeof value === 'string' && value.match(/^(\d{4})\/(\d{2})\/(\d{2})$/);
-    if (match) {
-      const [, y, m, d] = match;
-      return new Date(Number(y), Number(m) - 1, Number(d)).getTime();
+    if (value instanceof Date) {
+      const ts = value.getTime();
+      return Number.isNaN(ts) ? 0 : ts;
     }
-    const parsed = new Date(value);
+    if (typeof value === 'number' && Number.isFinite(value)) return value;
+    if (typeof value !== 'string') return 0;
+    const trimmed = value.trim();
+    if (!trimmed) return 0;
+    const match = trimmed.match(/^(\d{4})[/:\\-](\d{2})[/:\\-](\d{2})(?:[ T](\d{2}):(\d{2}):(\d{2}))?/);
+    if (match) {
+      const [, y, m, d, hh = '00', mm = '00', ss = '00'] = match;
+      const parsed = new Date(Number(y), Number(m) - 1, Number(d), Number(hh), Number(mm), Number(ss));
+      return Number.isNaN(parsed.getTime()) ? 0 : parsed.getTime();
+    }
+    const parsed = new Date(trimmed);
     return Number.isNaN(parsed.getTime()) ? 0 : parsed.getTime();
+  };
+
+  const [sortVersion, setSortVersion] = useState(0);
+  const exifCacheRef = useRef(new Map());
+
+  // モーダル表示用
+  const [modalOpen, setModalOpen] = useState(false);
+  const [selectedSrc, setSelectedSrc] = useState('');
+  const [selectedExif, setSelectedExif] = useState(null);
+  const attemptedModalRef = useRef(new Set());
+
+  useEffect(() => {
+    images.forEach((item) => {
+      if (item?.exif) {
+        exifCacheRef.current.set(item.src, item.exif);
+      }
+    });
+  }, [images]);
+
+  const handleExifResolved = (src, exif) => {
+    if (!src || !exif) return;
+    const cached = exifCacheRef.current.get(src);
+    const nextShot = exif?.shotDate || null;
+    const prevShot = cached?.shotDate || null;
+    if (!cached || nextShot !== prevShot) {
+      exifCacheRef.current.set(src, exif);
+      setSortVersion((prev) => prev + 1);
+    }
   };
 
   const getSortTs = (item) => {
@@ -21,7 +58,9 @@ export default function PhotoGrid({ images }) {
     if (sortTs > 0) return sortTs;
     const publishedTs = parseDateText(item?.publishedDate);
     if (publishedTs) return publishedTs;
-    return parseDateText(item?.exif?.shotDate);
+    const cachedExif = item?.src ? exifCacheRef.current.get(item.src) : null;
+    const shotDate = cachedExif?.shotDate || item?.exif?.shotDate;
+    return parseDateText(shotDate);
   };
 
   const sortedImages = useMemo(() => {
@@ -29,7 +68,7 @@ export default function PhotoGrid({ images }) {
       .map((item, idx) => ({ item, idx, sortTs: getSortTs(item) }))
       .sort((a, b) => (b.sortTs - a.sortTs) || (a.idx - b.idx))
       .map(({ item }) => item);
-  }, [images]);
+  }, [images, sortVersion]);
 
   const totalImages = sortedImages.length;
   const [loadedCount, setLoadedCount] = useState(0);
@@ -75,26 +114,6 @@ export default function PhotoGrid({ images }) {
   const contentClass = fadeOut || !isLoading
     ? 'opacity-100 transition-opacity duration-500'
     : 'opacity-0';
-
-  // モーダル表示用
-  const [modalOpen, setModalOpen] = useState(false);
-  const [selectedSrc, setSelectedSrc] = useState('');
-  const [selectedExif, setSelectedExif] = useState(null);
-  const attemptedModalRef = useRef(new Set());
-  const exifCacheRef = useRef(new Map());
-
-  useEffect(() => {
-    images.forEach((item) => {
-      if (item?.exif) {
-        exifCacheRef.current.set(item.src, item.exif);
-      }
-    });
-  }, [images]);
-
-  const handleExifResolved = (src, exif) => {
-    if (!src || !exif) return;
-    exifCacheRef.current.set(src, exif);
-  };
 
   const handleOpenModal = (src, exif) => {
     const cachedExif = exif || exifCacheRef.current.get(src) || null;
@@ -157,10 +176,10 @@ export default function PhotoGrid({ images }) {
 
       <div className={contentClass}>
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-          {sortedImages.map((item, idx) =>
+          {sortedImages.map((item) =>
             item.isLocal ? (
               <PhotoCard
-                key={idx}
+                key={item.src}
                 src={item.src}
                 exif={item.exif}
                 onClick={(resolvedExif) => handleOpenModal(item.src, resolvedExif || item.exif)}
@@ -169,7 +188,7 @@ export default function PhotoGrid({ images }) {
               />
             ) : (
               <PhotoCard
-                key={idx}
+                key={item.src}
                 src={item.src}
                 dateText={item.publishedDate}
                 onClick={() => handleOpenPost(item.postUrl)}
