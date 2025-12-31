@@ -9,8 +9,11 @@ export default function PhotoCard({
   exif,
   dateText,
   dateLabel,
-  loading = 'eager',
-  priority = true,
+  loading = 'lazy',
+  priority = false,
+  decoding = 'async',
+  deferUntilVisible = false,
+  enableClientExif = false,
   onClick,
   onImageLoad,
   onExifResolved,
@@ -18,6 +21,7 @@ export default function PhotoCard({
   const [ref, isVisible] = useIntersection({ threshold: 0.1, rootMargin: '200px' });
   const [resolvedExif, setResolvedExif] = useState(exif || null);
   const attemptedSrcRef = useRef(null);
+  const shouldRenderImage = !deferUntilVisible || isVisible;
 
   useEffect(() => {
     if (exif) {
@@ -31,7 +35,7 @@ export default function PhotoCard({
   }, [resolvedExif, onExifResolved, src]);
 
   useEffect(() => {
-    if (resolvedExif || !isVisible || !src?.startsWith('/photos/')) return;
+    if (!enableClientExif || resolvedExif || !isVisible || !src?.startsWith('/photos/')) return;
     if (attemptedSrcRef.current === src) return;
     attemptedSrcRef.current = src;
     let cancelled = false;
@@ -75,16 +79,19 @@ export default function PhotoCard({
       className={`transition-all duration-700 ease-out opacity-0 translate-y-8 ${isVisible ? 'opacity-100 translate-y-0' : ''}`}
     >
       <button type="button" className="relative block w-full aspect-square overflow-hidden" onClick={handleClick}>
-        <Image
-          src={src}
-          alt=""
-          fill
-          className="object-cover"
-          loading={loading}
-          priority={priority}
-          onLoadingComplete={onImageLoad}
-          onError={onImageLoad}
-        />
+        {shouldRenderImage && (
+          <Image
+            src={src}
+            alt=""
+            fill
+            className="object-cover"
+            loading={loading}
+            priority={priority}
+            decoding={decoding}
+            onLoadingComplete={onImageLoad}
+            onError={onImageLoad}
+          />
+        )}
         {hasExif && (
           <div className="pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 via-black/40 to-transparent px-2 pb-2 pt-6">
             <div className="text-[11px] text-gray-100 tracking-[0.18em]">

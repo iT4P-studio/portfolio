@@ -5,6 +5,7 @@ import PhotoCard from '../components/PhotoCard';
 import { EXIF_PICK_FIELDS, buildExifInfo } from './exifFormat';
 
 const PRELOAD_COUNT = 6;
+const MOBILE_PRELOAD_COUNT = 2;
 
 export default function PhotoGrid({ images }) {
   const parseDateText = (value) => {
@@ -49,6 +50,7 @@ export default function PhotoGrid({ images }) {
 
   const [sortVersion, setSortVersion] = useState(0);
   const exifCacheRef = useRef(new Map());
+  const [preloadCount, setPreloadCount] = useState(MOBILE_PRELOAD_COUNT);
 
   // モーダル表示用
   const [modalOpen, setModalOpen] = useState(false);
@@ -63,6 +65,15 @@ export default function PhotoGrid({ images }) {
       }
     });
   }, [images]);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const media = window.matchMedia('(max-width: 640px)');
+    const update = () => setPreloadCount(media.matches ? MOBILE_PRELOAD_COUNT : PRELOAD_COUNT);
+    update();
+    media.addEventListener('change', update);
+    return () => media.removeEventListener('change', update);
+  }, []);
 
   const handleExifResolved = (src, exif) => {
     if (!src || !exif) return;
@@ -92,7 +103,7 @@ export default function PhotoGrid({ images }) {
       .map(({ item }) => item);
   }, [images, sortVersion]);
 
-  const totalImages = Math.min(sortedImages.length, PRELOAD_COUNT);
+  const totalImages = Math.min(sortedImages.length, preloadCount);
   const [loadedCount, setLoadedCount] = useState(0);
   const [isLoading, setIsLoading] = useState(totalImages > 0);
   const [fadeOut, setFadeOut] = useState(false);
@@ -107,6 +118,10 @@ export default function PhotoGrid({ images }) {
   const handleImageLoad = () => {
     setLoadedCount(prev => Math.min(prev + 1, totalImages));
   };
+
+  useEffect(() => {
+    setLoadedCount(prev => Math.min(prev, totalImages));
+  }, [totalImages]);
 
   // ロード進捗 (0~100)
   const progress = totalImages > 0
@@ -205,9 +220,8 @@ export default function PhotoGrid({ images }) {
       <div className={contentClass}>
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
           {sortedImages.map((item, idx) => {
-            const shouldPreload = idx < PRELOAD_COUNT;
+            const shouldPreload = idx < preloadCount;
             const loading = shouldPreload ? 'eager' : 'lazy';
-            const priority = shouldPreload;
             const onImageLoad = shouldPreload ? handleImageLoad : undefined;
             return item.isLocal ? (
               <PhotoCard
@@ -215,7 +229,8 @@ export default function PhotoGrid({ images }) {
                 src={item.src}
                 exif={item.exif}
                 loading={loading}
-                priority={priority}
+                deferUntilVisible
+                enableClientExif={false}
                 onClick={(resolvedExif) => handleOpenModal(item.src, resolvedExif || item.exif)}
                 onImageLoad={onImageLoad}
                 onExifResolved={handleExifResolved}
@@ -226,7 +241,8 @@ export default function PhotoGrid({ images }) {
                 src={item.src}
                 dateText={item.publishedDate}
                 loading={loading}
-                priority={priority}
+                deferUntilVisible
+                enableClientExif={false}
                 onClick={() => handleOpenPost(item.postUrl)}
                 onImageLoad={onImageLoad}
               />
