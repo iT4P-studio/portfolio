@@ -14,6 +14,7 @@ export default function PhotoCard({
   decoding = 'async',
   deferUntilVisible = false,
   enableClientExif = false,
+  exifKey,
   onClick,
   onImageLoad,
   onExifResolved,
@@ -31,8 +32,9 @@ export default function PhotoCard({
 
   useEffect(() => {
     if (!resolvedExif || !onExifResolved) return;
-    onExifResolved(src, resolvedExif);
-  }, [resolvedExif, onExifResolved, src]);
+    const key = exifKey || src;
+    onExifResolved(key, resolvedExif);
+  }, [resolvedExif, onExifResolved, src, exifKey]);
 
   useEffect(() => {
     if (!enableClientExif || resolvedExif || !isVisible || !src?.startsWith('/photos/')) return;

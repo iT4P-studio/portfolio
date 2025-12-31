@@ -51,6 +51,7 @@ export default function PhotoGrid({ images }) {
   const [sortVersion, setSortVersion] = useState(0);
   const exifCacheRef = useRef(new Map());
   const [preloadCount, setPreloadCount] = useState(MOBILE_PRELOAD_COUNT);
+  const [isMobile, setIsMobile] = useState(false);
 
   // モーダル表示用
   const [modalOpen, setModalOpen] = useState(false);
@@ -69,7 +70,11 @@ export default function PhotoGrid({ images }) {
   useEffect(() => {
     if (typeof window === 'undefined') return;
     const media = window.matchMedia('(max-width: 640px)');
-    const update = () => setPreloadCount(media.matches ? MOBILE_PRELOAD_COUNT : PRELOAD_COUNT);
+    const update = () => {
+      const mobile = media.matches;
+      setIsMobile(mobile);
+      setPreloadCount(mobile ? MOBILE_PRELOAD_COUNT : PRELOAD_COUNT);
+    };
     update();
     media.addEventListener('change', update);
     return () => media.removeEventListener('change', update);
@@ -204,6 +209,13 @@ export default function PhotoGrid({ images }) {
     window.open(postUrl, '_blank');
   };
 
+  const getDisplaySrc = (item) => {
+    if (!item?.src) return '';
+    if (!item.isLocal || !isMobile) return item.src;
+    const fileName = item.src.split('/').pop();
+    return `/photos/mobile/${fileName}`;
+  };
+
   return (
     <div className="container mx-auto px-4 py-8">
       {isLoading && (
@@ -223,10 +235,12 @@ export default function PhotoGrid({ images }) {
             const shouldPreload = idx < preloadCount;
             const loading = shouldPreload ? 'eager' : 'lazy';
             const onImageLoad = shouldPreload ? handleImageLoad : undefined;
+            const displaySrc = getDisplaySrc(item);
             return item.isLocal ? (
               <PhotoCard
                 key={item.src}
-                src={item.src}
+                src={displaySrc}
+                exifKey={item.src}
                 exif={item.exif}
                 loading={loading}
                 deferUntilVisible
