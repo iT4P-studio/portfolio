@@ -120,7 +120,7 @@ function MediaItem({ date, title, type, embedUrl, caption }) {
 
       {/* 左: メディア(幅300×高さ169) + 右: キャプション */}
       <div className="flex flex-col sm:flex-row items-start gap-4">
-        <div className="w-[300px] h-[169px] relative overflow-hidden rounded-lg shrink-0">
+        <div className="w-full sm:max-w-[300px] aspect-video relative overflow-hidden rounded-lg shrink-0">
           {type === "video" ? (
             <VideoEmbed embedUrl={embedUrl} title={title} />
           ) : (

@@ -6,7 +6,7 @@ import PhotoCard from '../components/PhotoCard';
 export default function PhotoGrid({ images }) {
   const totalImages = images.length;
   const [loadedCount, setLoadedCount] = useState(0);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(totalImages > 0);
   const [fadeOut, setFadeOut] = useState(false);
 
   // 画像ロード完了毎にカウント（成功・失敗どちらも）
@@ -15,10 +15,13 @@ export default function PhotoGrid({ images }) {
   };
 
   // ロード進捗 (0~100)
-  const progress = Math.round((loadedCount / totalImages) * 100);
+  const progress = totalImages > 0
+    ? Math.round((loadedCount / totalImages) * 100)
+    : 100;
 
   // プログレス完了時のフェードアウト
   useEffect(() => {
+    if (!isLoading) return;
     if (progress === 100) {
       const fadeTimer = setTimeout(() => {
         setFadeOut(true);
@@ -27,7 +30,7 @@ export default function PhotoGrid({ images }) {
       }, 500);
       return () => clearTimeout(fadeTimer);
     }
-  }, [progress]);
+  }, [progress, isLoading]);
 
   // 4秒経過で強制フェードアウト
   useEffect(() => {
@@ -42,7 +45,7 @@ export default function PhotoGrid({ images }) {
   const overlayClass = fadeOut
     ? 'opacity-0 transition-opacity duration-500'
     : 'opacity-100';
-  const contentClass = fadeOut
+  const contentClass = fadeOut || !isLoading
     ? 'opacity-100 transition-opacity duration-500'
     : 'opacity-0';
 
@@ -71,7 +74,7 @@ export default function PhotoGrid({ images }) {
           <span className="text-white text-2xl mb-4" style={{ fontFamily: "'Avenir Next', 'Yu Gothic', sans-serif" }}>
             {progress}%
           </span>
-          <div className="w-[500px] h-1 bg-black relative overflow-hidden">
+          <div className="w-[80vw] max-w-[500px] h-1 bg-black relative overflow-hidden">
             <div className="absolute left-0 top-0 h-full bg-white transition-all" style={{ width: `${progress}%` }} />
           </div>
         </div>
