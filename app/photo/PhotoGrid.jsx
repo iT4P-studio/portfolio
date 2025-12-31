@@ -57,6 +57,7 @@ export default function PhotoGrid({ images }) {
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedSrc, setSelectedSrc] = useState('');
   const [selectedExif, setSelectedExif] = useState(null);
+  const [modalImageReady, setModalImageReady] = useState(false);
   const attemptedModalRef = useRef(new Set());
 
   useEffect(() => {
@@ -167,11 +168,13 @@ export default function PhotoGrid({ images }) {
     const cachedExif = exif || exifCacheRef.current.get(src) || null;
     setSelectedSrc(src);
     setSelectedExif(cachedExif);
+    setModalImageReady(false);
     setModalOpen(true);
   };
   const handleCloseModal = () => {
     setSelectedSrc('');
     setSelectedExif(null);
+    setModalImageReady(false);
     setModalOpen(false);
   };
 
@@ -276,8 +279,15 @@ export default function PhotoGrid({ images }) {
               &times;
             </button>
             <div className="relative">
-              <img src={selectedSrc} alt="" className="w-full h-full object-contain" style={{ maxHeight: '90vh', maxWidth: '90vw' }} />
-              {selectedExif && (
+              <img
+                src={selectedSrc}
+                alt=""
+                className="w-full h-full object-contain"
+                style={{ maxHeight: '90vh', maxWidth: '90vw' }}
+                onLoad={() => setModalImageReady(true)}
+                onError={() => setModalImageReady(true)}
+              />
+              {selectedExif && modalImageReady && (
                 <div className="pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 via-black/50 to-transparent px-4 pb-4 pt-10">
                   <div className="flex flex-wrap gap-x-4 gap-y-2 text-xs text-gray-100 leading-relaxed">
                     {modalShotDate && <span>撮影日：{modalShotDate}</span>}
