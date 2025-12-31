@@ -4,6 +4,8 @@ import React, { useState, useEffect, useMemo, useRef } from 'react';
 import PhotoCard from '../components/PhotoCard';
 import { EXIF_PICK_FIELDS, buildExifInfo } from './exifFormat';
 
+const PRELOAD_COUNT = 6;
+
 export default function PhotoGrid({ images }) {
   const parseDateText = (value) => {
     if (!value) return 0;
@@ -90,7 +92,7 @@ export default function PhotoGrid({ images }) {
       .map(({ item }) => item);
   }, [images, sortVersion]);
 
-  const totalImages = sortedImages.length;
+  const totalImages = Math.min(sortedImages.length, PRELOAD_COUNT);
   const [loadedCount, setLoadedCount] = useState(0);
   const [isLoading, setIsLoading] = useState(totalImages > 0);
   const [fadeOut, setFadeOut] = useState(false);
@@ -103,7 +105,7 @@ export default function PhotoGrid({ images }) {
 
   // 画像ロード完了毎にカウント（成功・失敗どちらも）
   const handleImageLoad = () => {
-    setLoadedCount(prev => prev + 1);
+    setLoadedCount(prev => Math.min(prev + 1, totalImages));
   };
 
   // ロード進捗 (0~100)
@@ -202,14 +204,20 @@ export default function PhotoGrid({ images }) {
 
       <div className={contentClass}>
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-          {sortedImages.map((item) =>
-            item.isLocal ? (
+          {sortedImages.map((item, idx) => {
+            const shouldPreload = idx < PRELOAD_COUNT;
+            const loading = shouldPreload ? 'eager' : 'lazy';
+            const priority = shouldPreload;
+            const onImageLoad = shouldPreload ? handleImageLoad : undefined;
+            return item.isLocal ? (
               <PhotoCard
                 key={item.src}
                 src={item.src}
                 exif={item.exif}
+                loading={loading}
+                priority={priority}
                 onClick={(resolvedExif) => handleOpenModal(item.src, resolvedExif || item.exif)}
-                onImageLoad={handleImageLoad}
+                onImageLoad={onImageLoad}
                 onExifResolved={handleExifResolved}
               />
             ) : (
@@ -217,11 +225,13 @@ export default function PhotoGrid({ images }) {
                 key={item.src}
                 src={item.src}
                 dateText={item.publishedDate}
+                loading={loading}
+                priority={priority}
                 onClick={() => handleOpenPost(item.postUrl)}
-                onImageLoad={handleImageLoad}
+                onImageLoad={onImageLoad}
               />
-            )
-          )}
+            );
+          })}
         </div>
       </div>
 

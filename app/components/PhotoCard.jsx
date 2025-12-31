@@ -9,6 +9,8 @@ export default function PhotoCard({
   exif,
   dateText,
   dateLabel,
+  loading = 'eager',
+  priority = true,
   onClick,
   onImageLoad,
   onExifResolved,
@@ -78,8 +80,8 @@ export default function PhotoCard({
           alt=""
           fill
           className="object-cover"
-          loading="eager"
-          priority
+          loading={loading}
+          priority={priority}
           onLoadingComplete={onImageLoad}
           onError={onImageLoad}
         />
