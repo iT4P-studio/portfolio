@@ -303,6 +303,17 @@ function DesktopView() {
   return (
     <main className="relative min-h-[calc(100vh-60px)] bg-black text-white">
       <AmbientBackground />
+      <motion.div initial="initial" animate="animate" className="absolute inset-x-0 top-12 z-10">
+        <div className="mx-auto max-w-6xl px-6">
+          <div className="flex items-center gap-4 text-gray-500">
+            <span className="text-[11px] tracking-[0.45em]">ABOUT</span>
+            <motion.span variants={variants.rule} className="h-px w-16 origin-left bg-white/40" />
+          </div>
+          <motion.h1 variants={variants.title} className="mt-3 text-4xl font-semibold md:text-5xl">
+            About
+          </motion.h1>
+        </div>
+      </motion.div>
       <div className="relative z-10 mx-auto flex h-[calc(100vh-60px)] max-w-6xl items-center px-6">
         <AnimatePresence mode="wait">
           <motion.section
@@ -365,7 +376,16 @@ function MobileView() {
   return (
     <main className="relative bg-black text-white">
       <AmbientBackground />
-      <div className="relative z-10 mx-auto flex max-w-3xl flex-col gap-12 px-6 py-10">
+      <div className="relative z-10 mx-auto flex max-w-3xl flex-col gap-12 px-6 py-12">
+        <motion.div initial="initial" animate="animate" className="mb-2">
+          <div className="flex items-center gap-4 text-gray-500">
+            <span className="text-[11px] tracking-[0.45em]">ABOUT</span>
+            <motion.span variants={variants.rule} className="h-px w-16 origin-left bg-white/40" />
+          </div>
+          <motion.h1 variants={variants.title} className="mt-3 text-4xl font-semibold md:text-5xl">
+            About
+          </motion.h1>
+        </motion.div>
         {sections.map((section, index) => (
           <motion.section
             key={section.key}
