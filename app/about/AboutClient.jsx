@@ -19,16 +19,17 @@ const careerData = [
 const historyGroups = [
   { period: "バレーボール", items: ["SV.LEAGUE"] },
   {
-    period: "陸上競技",
+    period: "ロード",
     items: [
       "東京2025世界陸上",
       "東京マラソン",
       "横浜マラソン",
       "福岡マラソン",
       "その他全国のマラソン・トレイルラン",
+      "ツール・ド・東北",
+      "おきなわKINトライアスロン大会",
     ],
   },
-  { period: "ロード", items: ["ツール・ド・東北", "おきなわKINトライアスロン大会"] },
   {
     period: "学校関係",
     items: [
