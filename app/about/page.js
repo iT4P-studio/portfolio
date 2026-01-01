@@ -58,6 +58,9 @@ const equipmentCategories = [
 const links = [
   { href: "https://xn--19ja1fb.xn--q9jyb4c/#home", icon: "/images/icons/ふわふわ.みんな.png" },
   { href: "https://iorin.io/", icon: "/images/icons/iorin.io.png" },
+  { href: "https://raspi0124.dev/", icon: "/images/icons/raspi0124.dev.png" },
+  { href: "https://www.uekann.com/", icon: "/images/icons/uekann.com.png" },
+  { href: "https://www.ultrabumbuku.dev/", icon: "/images/icons/ultrabumbuku.dev.png" },
 ];
 
 function useWindowSize() {
@@ -228,7 +231,10 @@ function EquipmentSection({ variants }) {
 
 function LinksSection({ variants }) {
   return (
-    <motion.div variants={variants.list} className="flex flex-wrap justify-center gap-8">
+    <motion.div
+      variants={variants.list}
+      className="grid grid-cols-2 justify-items-center gap-x-6 gap-y-8 sm:grid-cols-3 md:grid-cols-5"
+    >
       {links.map((link, i) => {
         const filename = link.icon.split("/").pop().replace(/\.[^/.]+$/, "");
         return (
@@ -238,7 +244,7 @@ function LinksSection({ variants }) {
             href={link.href}
             target="_blank"
             rel="noopener noreferrer"
-            className="group flex flex-col items-center gap-3"
+            className="group flex w-28 flex-col items-center gap-3 text-center"
           >
             <div className="flex h-16 w-16 items-center justify-center rounded-full border border-white/10 bg-white/5 transition-colors duration-300 group-hover:border-white/40 group-hover:bg-white/10">
               <Image src={link.icon} alt={filename} width={48} height={48} />
