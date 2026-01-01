@@ -44,7 +44,7 @@ export default function HomeClient({ slides }) {
             >
               <Image
                 src={slides[slideIndex]}
-                alt="slide"
+                alt={`iT4P studio showcase ${slideIndex + 1}`}
                 fill
                 className="object-cover"
                 priority

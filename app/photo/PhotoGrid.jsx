@@ -240,6 +240,16 @@ export default function PhotoGrid({ images }) {
     return `/photos/mobile/${fileName}`;
   };
 
+  const getAltText = (item) => {
+    if (!item) return 'Photo work';
+    if (item.isLocal) {
+      const label = item.exif?.shotDate || item.src?.split('/').pop();
+      return label ? `Photo work ${label}` : 'Photo work';
+    }
+    const label = item.publishedDate;
+    return label ? `Photo work ${label}` : 'Photo work';
+  };
+
   return (
     <div className="mx-auto max-w-6xl px-6 py-10">
       {isLoading && (
@@ -257,26 +267,29 @@ export default function PhotoGrid({ images }) {
         <motion.div initial={entrance.initial} animate={entrance.animate}>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
             {sortedImages.map((item) => {
-              const displaySrc = getDisplaySrc(item);
-              return item.isLocal ? (
-                <PhotoCard
-                  key={item.src}
-                  src={displaySrc}
-                  exifKey={item.src}
-                  exif={item.exif}
-                  loading="eager"
-                  priority
+            const displaySrc = getDisplaySrc(item);
+            const altText = getAltText(item);
+            return item.isLocal ? (
+              <PhotoCard
+                key={item.src}
+                src={displaySrc}
+                alt={altText}
+                exifKey={item.src}
+                exif={item.exif}
+                loading="eager"
+                priority
                   onClick={(resolvedExif) => handleOpenModal(item.src, resolvedExif || item.exif)}
                   onImageLoad={handleImageLoad}
                   onExifResolved={handleExifResolved}
                 />
-              ) : (
-                <PhotoCard
-                  key={item.src}
-                  src={item.src}
-                  dateText={item.publishedDate}
-                  loading="eager"
-                  priority
+            ) : (
+              <PhotoCard
+                key={item.src}
+                src={item.src}
+                alt={altText}
+                dateText={item.publishedDate}
+                loading="eager"
+                priority
                   onClick={() => handleOpenPost(item.postUrl)}
                   onImageLoad={handleImageLoad}
                 />

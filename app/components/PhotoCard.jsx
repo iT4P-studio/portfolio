@@ -6,6 +6,7 @@ import useIntersection from './useIntersection';
 
 export default function PhotoCard({
   src,
+  alt = '',
   exif,
   dateText,
   dateLabel,
@@ -84,7 +85,7 @@ export default function PhotoCard({
         {shouldRenderImage && (
           <Image
             src={src}
-            alt=""
+            alt={alt}
             fill
             className="object-cover"
             loading={loading}

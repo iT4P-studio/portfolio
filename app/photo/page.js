@@ -7,6 +7,32 @@ import xPhotosData from "./xPhotosData";
 import PhotoGrid from "./PhotoGrid";
 
 export const runtime = "nodejs";
+export const metadata = {
+  title: "Photo Works",
+  description: "撮影実績・フォトギャラリー。スポーツ・イベント・ステージ撮影を中心に掲載。",
+  alternates: {
+    canonical: "/photo",
+  },
+  openGraph: {
+    title: "Photo Works",
+    description: "撮影実績・フォトギャラリー。スポーツ・イベント・ステージ撮影を中心に掲載。",
+    url: "/photo",
+    images: [
+      {
+        url: "/og.jpg",
+        width: 1200,
+        height: 630,
+        alt: "iT4P studio Photo Works",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Photo Works",
+    description: "撮影実績・フォトギャラリー。スポーツ・イベント・ステージ撮影を中心に掲載。",
+    images: ["/og.jpg"],
+  },
+};
 
 const getExifrParser = async () => {
   if (exifr?.parse) return exifr.parse;
