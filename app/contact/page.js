@@ -116,7 +116,7 @@ export default function ContactPage() {
   return (
     <main className="relative min-h-[calc(100vh-60px)] bg-black text-white">
       <AmbientBackground />
-      <div className="relative z-10 mx-auto max-w-5xl px-6 py-12">
+      <div className="relative z-10 mx-auto max-w-6xl px-6 py-12">
         <motion.div variants={variants.container} initial="initial" animate="animate" className="grid gap-10 lg:grid-cols-[1.05fr_1fr]">
           <motion.div variants={variants.title} className="max-w-lg">
             <div className="flex items-center gap-4 text-gray-500">

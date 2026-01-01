@@ -20,7 +20,7 @@ export default function RootLayout({ children }) {
         </main>
 
         {/* フッター */}
-        <footer className="bg-black text-gray-500 text-center py-4">
+        <footer className="border-t border-white/10 bg-black py-4 text-center text-gray-500">
           © Copyright iT4P studio All rights reserved.
         </footer>
       </body>

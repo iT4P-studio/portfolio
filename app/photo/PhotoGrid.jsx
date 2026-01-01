@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useMemo, useRef } from 'react';
+import { motion, useReducedMotion } from 'framer-motion';
 import PhotoCard from '../components/PhotoCard';
 import { EXIF_PICK_FIELDS, buildExifInfo } from './exifFormat';
 
@@ -44,6 +45,19 @@ export default function PhotoGrid({ images }) {
     if (!cleaned) return null;
     return `F${cleaned}`;
   };
+
+  const reduceMotion = useReducedMotion();
+  const entrance = useMemo(() => {
+    const baseEase = [0.16, 1, 0.3, 1];
+    return {
+      initial: { opacity: 0, y: reduceMotion ? 0 : 16 },
+      animate: {
+        opacity: 1,
+        y: 0,
+        transition: { duration: reduceMotion ? 0 : 0.6, ease: baseEase },
+      },
+    };
+  }, [reduceMotion]);
 
   const [sortVersion, setSortVersion] = useState(0);
   const exifCacheRef = useRef(new Map());
@@ -227,7 +241,7 @@ export default function PhotoGrid({ images }) {
   };
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="mx-auto max-w-6xl px-6 py-10">
       {isLoading && (
         <div className={`fixed inset-0 z-50 flex flex-col items-center justify-center bg-black ${overlayClass}`}>
           <span className="text-white text-2xl mb-4" style={{ fontFamily: "'Avenir Next', 'Yu Gothic', sans-serif" }}>
@@ -240,34 +254,36 @@ export default function PhotoGrid({ images }) {
       )}
 
       <div className={contentClass}>
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-          {sortedImages.map((item) => {
-            const displaySrc = getDisplaySrc(item);
-            return item.isLocal ? (
-              <PhotoCard
-                key={item.src}
-                src={displaySrc}
-                exifKey={item.src}
-                exif={item.exif}
-                loading="eager"
-                priority
-                onClick={(resolvedExif) => handleOpenModal(item.src, resolvedExif || item.exif)}
-                onImageLoad={handleImageLoad}
-                onExifResolved={handleExifResolved}
-              />
-            ) : (
-              <PhotoCard
-                key={item.src}
-                src={item.src}
-                dateText={item.publishedDate}
-                loading="eager"
-                priority
-                onClick={() => handleOpenPost(item.postUrl)}
-                onImageLoad={handleImageLoad}
-              />
-            );
-          })}
-        </div>
+        <motion.div initial={entrance.initial} animate={entrance.animate}>
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+            {sortedImages.map((item) => {
+              const displaySrc = getDisplaySrc(item);
+              return item.isLocal ? (
+                <PhotoCard
+                  key={item.src}
+                  src={displaySrc}
+                  exifKey={item.src}
+                  exif={item.exif}
+                  loading="eager"
+                  priority
+                  onClick={(resolvedExif) => handleOpenModal(item.src, resolvedExif || item.exif)}
+                  onImageLoad={handleImageLoad}
+                  onExifResolved={handleExifResolved}
+                />
+              ) : (
+                <PhotoCard
+                  key={item.src}
+                  src={item.src}
+                  dateText={item.publishedDate}
+                  loading="eager"
+                  priority
+                  onClick={() => handleOpenPost(item.postUrl)}
+                  onImageLoad={handleImageLoad}
+                />
+              );
+            })}
+          </div>
+        </motion.div>
       </div>
 
       {modalOpen && (

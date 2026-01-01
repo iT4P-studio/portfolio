@@ -14,7 +14,7 @@ export default function Header() {
   ];
 
   return (
-    <header className="bg-black border-b border-gray-600">
+    <header className="bg-black border-b border-white/10">
       <nav className="container mx-auto flex flex-wrap items-center justify-between px-4 py-4">
         {/* 左端: ロゴボタン (全画面共通) */}
         <div className="flex items-center flex-shrink-0">

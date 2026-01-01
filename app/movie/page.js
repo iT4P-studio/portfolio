@@ -1,6 +1,7 @@
 "use client";
 
-import React from "react";
+import React, { useMemo } from "react";
+import { motion, useReducedMotion } from "framer-motion";
 
 /**
  * MovieWorksページ
@@ -78,24 +79,70 @@ export default function MovieWorksPage() {
     },
   ];
 
-  return (
-    <div className="container mx-auto px-4 py-8 text-white">
-      <h1 className="text-3xl font-bold mb-6">Movie Works</h1>
-      <p className="mb-4">
-        {"本ページではクライアント様より直接ご依頼をいただいた案件のみを掲載しております。"}
-      </p>
+  const reduceMotion = useReducedMotion();
+  const variants = useMemo(() => {
+    const baseEase = [0.16, 1, 0.3, 1];
+    return {
+      container: {
+        initial: { opacity: 0, y: reduceMotion ? 0 : 12 },
+        animate: {
+          opacity: 1,
+          y: 0,
+          transition: { duration: reduceMotion ? 0 : 0.6, ease: baseEase },
+        },
+      },
+      list: {
+        animate: {
+          transition: { staggerChildren: reduceMotion ? 0 : 0.08, delayChildren: reduceMotion ? 0 : 0.1 },
+        },
+      },
+      item: {
+        initial: { opacity: 0, y: reduceMotion ? 0 : 16 },
+        animate: {
+          opacity: 1,
+          y: 0,
+          transition: { duration: reduceMotion ? 0 : 0.55, ease: baseEase },
+        },
+      },
+      rule: {
+        initial: { scaleX: 0 },
+        animate: {
+          scaleX: 1,
+          transition: { duration: reduceMotion ? 0 : 0.6, ease: baseEase, delay: reduceMotion ? 0 : 0.1 },
+        },
+      },
+    };
+  }, [reduceMotion]);
 
-      <div className="border-t border-gray-700/60">
-        <div className="border-b border-gray-700/60 py-10">
+  return (
+    <motion.div
+      className="mx-auto max-w-6xl px-6 py-12 text-white"
+      variants={variants.container}
+      initial="initial"
+      animate="animate"
+    >
+      <motion.div variants={variants.item} className="mb-10 max-w-3xl">
+        <div className="flex items-center gap-4 text-gray-500">
+          <span className="text-[11px] tracking-[0.45em]">MOVIE WORKS</span>
+          <motion.span variants={variants.rule} className="h-px w-16 origin-left bg-white/40" />
+        </div>
+        <h1 className="mt-4 text-4xl font-semibold md:text-5xl">Movie Works</h1>
+        <p className="mt-4 text-sm text-gray-300 md:text-base">
+          {"本ページではクライアント様より直接ご依頼をいただいた案件のみを掲載しております。"}
+        </p>
+      </motion.div>
+
+      <motion.div variants={variants.list} className="border-t border-white/10">
+        <motion.div variants={variants.item} className="border-b border-white/10 py-10">
           <FeaturedItem
             date={featured.date}
             title={featured.title}
             embedUrl={featured.embedUrl}
             caption={featured.caption}
           />
-        </div>
+        </motion.div>
 
-        <div className="lg:grid lg:grid-cols-2">
+        <motion.div variants={variants.list} className="lg:grid lg:grid-cols-2">
           {items.map((item, idx) => {
             const isRight = idx % 2 === 1;
             const hasTopBorder = idx > 0;
@@ -104,9 +151,10 @@ export default function MovieWorksPage() {
             const columnBorderClass = isRight ? "lg:border-l lg:pl-8" : "lg:pr-8";
 
             return (
-              <div
+              <motion.div
                 key={idx}
-                className={`py-8 border-gray-700/60 ${topBorderClass} ${lgTopBorderReset} ${columnBorderClass}`}
+                variants={variants.item}
+                className={`py-8 border-white/10 ${topBorderClass} ${lgTopBorderReset} ${columnBorderClass}`}
               >
                 <MediaItem
                   date={item.date}
@@ -115,12 +163,12 @@ export default function MovieWorksPage() {
                   embedUrl={item.embedUrl}
                   caption={item.caption}
                 />
-              </div>
+              </motion.div>
             );
           })}
-        </div>
-      </div>
-    </div>
+        </motion.div>
+      </motion.div>
+    </motion.div>
   );
 }
 
@@ -130,7 +178,7 @@ function MediaItem({ date, title, type, embedUrl, caption }) {
     <div className="flex flex-col gap-4 sm:gap-6">
       {/* 日付をタイトルの上に表示 (小文字) */}
       <div>
-        <div className="text-xs text-gray-400 tracking-[0.2em] whitespace-nowrap overflow-hidden text-ellipsis">
+        <div className="text-xs text-gray-500 tracking-[0.35em] whitespace-nowrap overflow-hidden text-ellipsis">
           {date}
         </div>
 
@@ -173,7 +221,7 @@ function FeaturedItem({ date, title, embedUrl, caption }) {
   return (
     <div className="flex flex-col gap-4 sm:gap-6">
       <div>
-        <div className="text-xs text-gray-400 tracking-[0.2em] whitespace-nowrap overflow-hidden text-ellipsis">
+        <div className="text-xs text-gray-500 tracking-[0.35em] whitespace-nowrap overflow-hidden text-ellipsis">
           {date}
         </div>
         <h2 className="text-3xl sm:text-4xl font-semibold tracking-tight">

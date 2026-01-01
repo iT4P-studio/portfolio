@@ -98,7 +98,7 @@ export default function PriceClient() {
               <span className="text-[11px] tracking-[0.45em]">PRICE</span>
               <motion.span variants={variants.rule} className="h-px w-16 origin-left bg-white/40" />
             </div>
-            <h1 className="mt-4 text-4xl font-semibold md:text-6xl">Price</h1>
+            <h1 className="mt-4 text-4xl font-semibold md:text-5xl">Price</h1>
             <p className="mt-4 text-sm text-gray-300 md:text-base">
               料金は撮影内容等によって大きく変動することがございます。ぜひ一度、お気軽にお問い合わせください。
             </p>
@@ -119,13 +119,15 @@ export default function PriceClient() {
                 <h2 className="mt-3 text-2xl font-semibold text-white">{plan.title}</h2>
                 <p className="mt-2 text-xl text-white">{plan.price}</p>
                 <p className="mt-4 text-sm text-gray-300">{plan.details}</p>
-                <Link
-                  href={plan.contactLink}
-                  className="mt-auto inline-flex items-center gap-3 self-start rounded-full border border-white/30 px-5 py-2 text-sm tracking-[0.2em] text-white transition-colors hover:border-white hover:bg-white/10"
-                >
-                  お問い合わせ
-                  <span className="text-xs">→</span>
-                </Link>
+                <div className="mt-auto pt-6">
+                  <Link
+                    href={plan.contactLink}
+                    className="inline-flex items-center gap-3 self-start rounded-full border border-white/30 px-5 py-2 text-sm tracking-[0.2em] text-white transition-colors hover:border-white hover:bg-white/10"
+                  >
+                    お問い合わせ
+                    <span className="text-xs">→</span>
+                  </Link>
+                </div>
               </motion.div>
             ))}
           </motion.div>
