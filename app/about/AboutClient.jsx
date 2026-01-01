@@ -214,11 +214,15 @@ function HistorySection({ variants }) {
 
 function EquipmentSection({ variants }) {
   return (
-    <motion.div variants={variants.list} className="space-y-6">
+    <motion.div variants={variants.list} className="flex flex-col">
       {equipmentCategories.map((category, i) => (
-        <motion.div key={i} variants={variants.item} className="rounded-xl border border-white/10 bg-white/5 px-4 py-3">
+        <motion.div
+          key={i}
+          variants={variants.item}
+          className="border-b border-white/10 py-4 last:border-b-0 last:pb-0"
+        >
           <div className="text-xs tracking-[0.35em] text-gray-400">{category.category}</div>
-          <ul className="mt-3 grid gap-1 text-sm text-gray-100 md:text-base">
+          <ul className="mt-3 space-y-1 text-sm text-gray-100 md:text-base">
             {category.items.map((item, j) => (
               <li key={j}>{item}</li>
             ))}
