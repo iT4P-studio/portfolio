@@ -252,7 +252,9 @@ function LinksSection({ variants }) {
             className="group flex w-28 flex-col items-center gap-3 text-center"
           >
             <div className="flex h-16 w-16 items-center justify-center rounded-full border border-white/10 bg-white/5 transition-colors duration-300 group-hover:border-white/40 group-hover:bg-white/10">
-              <Image src={link.icon} alt={filename} width={48} height={48} />
+              <div className="relative h-12 w-12 overflow-hidden rounded-full bg-black/20">
+                <Image src={link.icon} alt={filename} fill className="object-cover" sizes="48px" />
+              </div>
             </div>
             <span className="text-xs tracking-[0.2em] text-gray-300">{filename}</span>
           </motion.a>
