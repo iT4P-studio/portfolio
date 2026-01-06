@@ -7,6 +7,7 @@ const SITE_URL = 'https://it4pstudio.com'
 const SITE_NAME = 'iT4P studio'
 const DEFAULT_DESCRIPTION = 'スポーツ・イベント・ステージ撮影から映像制作まで対応するフォト/ムービースタジオ。'
 const GTM_ID = 'GTM-K3GC8P7R'
+const GA_MEASUREMENT_ID = 'G-GVJZVJ676G'
 
 export const metadata = {
   metadataBase: new URL(SITE_URL),
@@ -75,7 +76,7 @@ export default function RootLayout({ children }) {
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
         />
-        <GoogleTagManager gtmId={GTM_ID} />
+        <GoogleTagManager gtmId={GTM_ID} dataLayer={{ gaMeasurementId: GA_MEASUREMENT_ID }} />
         {/* 全ページ共通のヘッダー */}
         <Header />
 
