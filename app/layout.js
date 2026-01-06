@@ -1,10 +1,12 @@
 import './globals.css'
 import React from 'react'
+import { GoogleTagManager } from '@next/third-parties/google'
 import Header from './components/Header'
 
 const SITE_URL = 'https://it4pstudio.com'
 const SITE_NAME = 'iT4P studio'
 const DEFAULT_DESCRIPTION = 'スポーツ・イベント・ステージ撮影から映像制作まで対応するフォト/ムービースタジオ。'
+const GTM_ID = 'GTM-K3GC8P7R'
 
 export const metadata = {
   metadataBase: new URL(SITE_URL),
@@ -73,6 +75,7 @@ export default function RootLayout({ children }) {
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
         />
+        <GoogleTagManager gtmId={GTM_ID} />
         {/* 全ページ共通のヘッダー */}
         <Header />
 

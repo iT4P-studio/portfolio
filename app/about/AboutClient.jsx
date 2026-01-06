@@ -3,7 +3,6 @@
 import React, { useState, useEffect, useCallback, useRef, useMemo } from "react";
 import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import Image from "next/image";
-import ReactGA from "react-ga4";
 
 const sectionTitles = ["経歴", "撮影歴", "所有機材", "Links"];
 
@@ -285,11 +284,6 @@ function DesktopView() {
     [sections.length]
   );
   const goPrev = useCallback(() => setIndex((i) => Math.max(i - 1, 0)), []);
-
-  useEffect(() => {
-    ReactGA.initialize("G-GVJZVJ676G");
-    ReactGA.send("pageview");
-  }, []);
 
   useEffect(() => {
     const onWheel = (e) => {
