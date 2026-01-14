@@ -22,6 +22,20 @@ export default function MovieClient() {
   // タイトル + 日付 + 埋め込み(動画/画像) + caption
   const items = [
     {
+      date: "2025/09/21",
+      title: "UNIDOL25夏 敗者復活戦 Digest",
+      type: "video",
+      embedUrl: "https://www.youtube.com/embed/P5tR6ST3dR4?si=3nkruc-4jUoRjokO",
+      caption: "UNIDOL25夏の敗者復活戦を撮影・収録・編集"
+    },
+    {
+      date: "2025/09/20",
+      title: "UNIDOL25夏 決勝戦 Digest",
+      type: "video",
+      embedUrl: "https://www.youtube.com/embed/pTAHd5M2i48?si=BFFTlwuUIpR2LnYV",
+      caption: "UNIDOL25夏 決勝戦映像を撮影・収録・編集"
+    },
+    {
       date: "2025/03/19",
       title: "ダンス公演 収録",
       type: "image",
