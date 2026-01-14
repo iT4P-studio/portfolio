@@ -12,6 +12,10 @@ export default function Header() {
     { href: '/about', label: 'About' },
     { href: '/contact', label: 'Contact' },
   ];
+  const appLinks = [
+    { href: '/apps', label: 'Apps一覧' },
+    { href: '/z9', label: 'Z9 Settings Visualizer' },
+  ];
 
   return (
     <header className="bg-black border-b border-white/10">
@@ -48,6 +52,27 @@ export default function Header() {
                 {link.label}
               </Link>
             ))}
+            <div className="relative group">
+              <Link
+                href="/apps"
+                className="px-4 py-2 text-white transition-colors duration-300 hover:bg-white hover:text-black whitespace-nowrap"
+              >
+                Apps
+              </Link>
+              <div
+                className="pointer-events-none absolute right-0 mt-2 w-56 rounded-lg border border-white/10 bg-black/90 p-2 opacity-0 transition group-hover:pointer-events-auto group-hover:opacity-100 group-focus-within:pointer-events-auto group-focus-within:opacity-100"
+              >
+                {appLinks.map(link => (
+                  <Link
+                    key={link.href}
+                    href={link.href}
+                    className="block rounded-md px-3 py-2 text-sm text-white transition-colors duration-200 hover:bg-white hover:text-black"
+                  >
+                    {link.label}
+                  </Link>
+                ))}
+              </div>
+            </div>
             {/* SNSアイコン (デスクトップ) */}
             <a href="https://x.com/it4p_studio" target="_blank" rel="noopener noreferrer" className="px-2">
               <img src="/icons/x.png" alt="X" className="h-6 w-6" />
@@ -87,7 +112,22 @@ export default function Header() {
               {link.label}
             </Link>
           ))}
-          {/* モバイルメニュー: SNSアイコン （Contactの下） */}
+          <div className="pt-6">
+            <p className="text-xs uppercase tracking-[0.3em] text-gray-500">Apps</p>
+            <div className="mt-3 flex flex-col space-y-3">
+              {appLinks.map(link => (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  className="text-white text-lg"
+                  onClick={() => setMenuOpen(false)}
+                >
+                  {link.label}
+                </Link>
+              ))}
+            </div>
+          </div>
+          {/* モバイルメニュー: SNSアイコン （Appsの下） */}
           <div className="pt-4 flex space-x-4">
             <a href="https://x.com/it4p_studio" target="_blank" rel="noopener noreferrer">
               <img src="/icons/x.png" alt="X" className="h-6 w-6" />
