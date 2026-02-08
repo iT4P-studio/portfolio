@@ -64,6 +64,12 @@ export default function Header() {
         </div>
       </nav>
 
+      <div className="border-t border-white/10 bg-black">
+        <div className="container mx-auto px-4 py-2 text-center text-xs tracking-[0.3em] text-gray-400 sm:text-sm">
+          2026/4/1〜現在、業務を停止しております。
+        </div>
+      </div>
+
       {/* モバイルメニュー */}
       <div
         className={`fixed top-0 left-0 z-50 h-screen w-3/4 bg-black transform transition-transform duration-300 ${
