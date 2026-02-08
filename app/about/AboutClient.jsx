@@ -309,6 +309,15 @@ function DesktopView() {
           <motion.h1 variants={variants.title} className="mt-3 text-4xl font-semibold md:text-5xl">
             About
           </motion.h1>
+          <motion.p
+            variants={variants.fade}
+            className="mt-3 text-sm tracking-[0.2em] text-gray-400 md:text-base"
+          >
+            代表　板𠩤豪士<span className="ml-2 text-gray-500">（板原豪士）</span>
+          </motion.p>
+          <motion.p variants={variants.fade} className="mt-1 text-xs tracking-[0.35em] text-gray-500 md:text-sm">
+            GOSHI ITAHARA
+          </motion.p>
         </div>
       </motion.div>
       <div className="relative z-10 mx-auto flex h-[calc(100vh-60px)] max-w-6xl items-center px-6">
@@ -382,6 +391,15 @@ function MobileView() {
           <motion.h1 variants={variants.title} className="mt-3 text-4xl font-semibold md:text-5xl">
             About
           </motion.h1>
+          <motion.p
+            variants={variants.fade}
+            className="mt-3 text-sm tracking-[0.2em] text-gray-400 md:text-base"
+          >
+            代表　板𠩤豪士<span className="ml-2 text-gray-500">（板原豪士）</span>
+          </motion.p>
+          <motion.p variants={variants.fade} className="mt-1 text-xs tracking-[0.35em] text-gray-500 md:text-sm">
+            GOSHI ITAHARA
+          </motion.p>
         </motion.div>
         {sections.map((section, index) => (
           <motion.section

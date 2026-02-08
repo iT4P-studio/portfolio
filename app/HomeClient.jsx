@@ -136,6 +136,19 @@ export default function HomeClient({ slides }) {
               </motion.h1>
             ))}
           </motion.div>
+          {visibleCount >= phrasesWithComma.length && (
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.4, delay: 0.5 }}
+              className="absolute bottom-36 z-10 text-center"
+            >
+              <div className="text-sm tracking-[0.35em] text-gray-200 sm:text-base">
+                代表　板𠩤豪士<span className="ml-2 text-gray-400">（板原豪士）</span>
+              </div>
+              <div className="mt-2 text-xs tracking-[0.45em] text-gray-400 sm:text-sm">GOSHI ITAHARA</div>
+            </motion.div>
+          )}
 
           {visibleCount >= phrasesWithComma.length && (
             <motion.div
