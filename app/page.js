@@ -3,14 +3,14 @@ import path from 'path';
 import HomeClient from './HomeClient';
 
 export const metadata = {
-  title: 'Home',
-  description: 'iT4P studioのフォト・ムービーワークスを紹介するポートフォリオサイト。',
+  title: '板原豪士（GOSHI ITAHARA）',
+  description: '板原豪士（GOSHI ITAHARA）が運営するiT4P studioのフォト・ムービーワークスを紹介するポートフォリオサイト。',
   alternates: {
     canonical: '/',
   },
   openGraph: {
-    title: 'iT4P studio',
-    description: 'iT4P studioのフォト・ムービーワークスを紹介するポートフォリオサイト。',
+    title: '板原豪士（GOSHI ITAHARA）｜iT4P studio',
+    description: '板原豪士（GOSHI ITAHARA）が運営するiT4P studioのフォト・ムービーワークスを紹介するポートフォリオサイト。',
     url: '/',
     images: [
       {
@@ -23,8 +23,8 @@ export const metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'iT4P studio',
-    description: 'iT4P studioのフォト・ムービーワークスを紹介するポートフォリオサイト。',
+    title: '板原豪士（GOSHI ITAHARA）｜iT4P studio',
+    description: '板原豪士（GOSHI ITAHARA）が運営するiT4P studioのフォト・ムービーワークスを紹介するポートフォリオサイト。',
     images: ['/og.jpg'],
   },
 };

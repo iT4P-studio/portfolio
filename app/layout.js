@@ -5,6 +5,9 @@ import Header from './components/Header'
 
 const SITE_URL = 'https://it4pstudio.com'
 const SITE_NAME = 'iT4P studio'
+const REP_NAME = '板𠩤豪士'
+const REP_NAME_ALT = '板原豪士'
+const REP_NAME_ROMAN = 'GOSHI ITAHARA'
 const DEFAULT_DESCRIPTION = 'スポーツ・イベント・ステージ撮影から映像制作まで対応するフォト/ムービースタジオ。'
 const GTM_ID = 'GTM-K3GC8P7R'
 const GA_MEASUREMENT_ID = 'G-GVJZVJ676G'
@@ -59,6 +62,19 @@ export default function RootLayout({ children }) {
         name: SITE_NAME,
         url: SITE_URL,
         logo: `${SITE_URL}/logo_W.png`,
+        sameAs: ['https://x.com/it4p_studio', 'https://www.instagram.com/it4hara5a/'],
+      },
+      {
+        '@type': 'Person',
+        name: REP_NAME,
+        alternateName: [REP_NAME_ALT, REP_NAME_ROMAN],
+        jobTitle: '代表',
+        worksFor: {
+          '@type': 'Organization',
+          name: SITE_NAME,
+          url: SITE_URL,
+        },
+        url: SITE_URL,
         sameAs: ['https://x.com/it4p_studio', 'https://www.instagram.com/it4hara5a/'],
       },
       {
