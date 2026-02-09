@@ -157,9 +157,9 @@ function AmbientBackground() {
   );
 }
 
-function SectionShell({ index, title, variants, children }) {
+function SectionShell({ index, title, variants, children, className = "" }) {
   return (
-    <div className="w-full max-w-3xl">
+    <div className={`w-full max-w-3xl ${className}`}>
       <div className="mb-8">
         <div className="flex items-center gap-4">
           <motion.span variants={variants.fade} className="text-[11px] tracking-[0.45em] text-gray-500">
@@ -331,7 +331,7 @@ function DesktopView() {
             animate="animate"
             exit="exit"
           >
-            <SectionShell index={index} title={sections[index].title} variants={variants}>
+            <SectionShell index={index} title={sections[index].title} variants={variants} className="pt-16">
               {sections[index].content}
             </SectionShell>
           </motion.section>
