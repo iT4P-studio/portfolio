@@ -22,6 +22,11 @@ body {
   padding: 0;
 }
 
+html[lang="ja"] body {
+  font-family: "Yu Gothic Light", "Yu Gothic", "YuGothic", "Yu Gothic UI", "Hiragino Kaku Gothic ProN", "Noto Sans JP", sans-serif;
+  font-weight: 300;
+}
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;

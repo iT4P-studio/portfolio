@@ -3,57 +3,114 @@
 import React, { useState, useEffect, useCallback, useRef, useMemo } from "react";
 import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import Image from "next/image";
+import { useLanguage } from "../components/LanguageProvider";
 
-const sectionTitles = ["経歴", "撮影歴", "所有機材", "Links"];
-
-const careerData = [
-  ["2022/3", "広尾学園高等学校 医進・サイエンスコース 卒業"],
-  ["2023/4", "iT4P studio 開業"],
-  ["2023/6", "ニコンプロフェッショナルサービス（NPS） 入会"],
-  ["2023/10", "乙種第4類危険物取扱者 合格"],
-  ["2024/7", "応用情報技術者試験 合格"],
-  ["2026/3", "筑波大学 情報学群 知識情報・図書館学類 卒業（見込み）"],
-];
-
-const historyGroups = [
-  { period: "バレーボール", items: ["SV.LEAGUE"] },
-  {
-    period: "ロード",
-    items: [
-      "東京2025世界陸上",
-      "東京マラソン",
-      "横浜マラソン",
-      "福岡マラソン",
-      "その他全国のマラソン・トレイルラン",
-      "ツール・ド・東北",
-      "おきなわKINトライアスロン大会",
+const ABOUT_COPY = {
+  ja: {
+    sectionTitles: ["経歴", "撮影歴", "所有機材", "Links"],
+    careerData: [
+      ["2022/3", "広尾学園高等学校 医進・サイエンスコース 卒業"],
+      ["2023/4", "iT4P studio 開業"],
+      ["2023/6", "ニコンプロフェッショナルサービス（NPS） 入会"],
+      ["2023/10", "乙種第4類危険物取扱者 合格"],
+      ["2024/7", "応用情報技術者試験 合格"],
+      ["2026/3", "筑波大学 情報学群 知識情報・図書館学類 卒業（見込み）"],
     ],
-  },
-  {
-    period: "学校関係",
-    items: [
-      "全国中学校体育大会",
-      "全国高等学校総合体育大会",
-      "その他、イベントの公式記録、スクールなど",
+    historyGroups: [
+      { period: "バレーボール", items: ["SV.LEAGUE"] },
+      {
+        period: "ロード",
+        items: [
+          "東京2025世界陸上",
+          "東京マラソン",
+          "横浜マラソン",
+          "福岡マラソン",
+          "その他全国のマラソン・トレイルラン",
+          "ツール・ド・東北",
+          "おきなわKINトライアスロン大会",
+        ],
+      },
+      {
+        period: "学校関係",
+        items: [
+          "全国中学校体育大会",
+          "全国高等学校総合体育大会",
+          "その他、イベントの公式記録、スクールなど",
+        ],
+      },
     ],
-  },
-];
-
-const equipmentCategories = [
-  { category: "カメラ", items: ["Nikon Z9", "Nikon Z8", "Nikon Z6"] },
-  {
-    category: "レンズ",
-    items: [
-      "Z 24-70mm f/4 S",
-      "Z 70-200mm f/2.8 VR S",
-      "Z 50mm f/1.2 S",
-      "Z 26mm f/2.8",
-      "Z TELECONVERTER TC-2.0x",
-      "AF-S Fisheye 8-15/3.5-4.5E",
+    equipmentCategories: [
+      { category: "カメラ", items: ["Nikon Z9", "Nikon Z8", "Nikon Z6"] },
+      {
+        category: "レンズ",
+        items: [
+          "Z 24-70mm f/4 S",
+          "Z 70-200mm f/2.8 VR S",
+          "Z 50mm f/1.2 S",
+          "Z 26mm f/2.8",
+          "Z TELECONVERTER TC-2.0x",
+          "AF-S Fisheye 8-15/3.5-4.5E",
+        ],
+      },
+      { category: "自動車", items: ["GR86"] },
     ],
+    repTitle: "代表",
+    aboutLabel: "ABOUT",
+    aboutTitle: "About",
   },
-  { category: "自動車", items: ["GR86"] },
-];
+  en: {
+    sectionTitles: ["Career", "Shooting Experience", "Equipment", "Links"],
+    careerData: [
+      ["2022/3", "Hiroo Gakuen High School, Medical Science Course — Graduated"],
+      ["2023/4", "Founded iT4P studio"],
+      ["2023/6", "Joined Nikon Professional Services (NPS)"],
+      ["2023/10", "Hazardous Materials Handler Class 4 — Passed"],
+      ["2024/7", "Applied Information Technology Engineer Exam — Passed"],
+      ["2026/3", "University of Tsukuba, School of Informatics (Expected)"],
+    ],
+    historyGroups: [
+      { period: "Volleyball", items: ["SV.LEAGUE"] },
+      {
+        period: "Road",
+        items: [
+          "World Athletics Championships Tokyo 2025",
+          "Tokyo Marathon",
+          "Yokohama Marathon",
+          "Fukuoka Marathon",
+          "Nationwide marathons and trail runs",
+          "Tour de Tohoku",
+          "Okinawa KIN Triathlon",
+        ],
+      },
+      {
+        period: "School Events",
+        items: [
+          "National Junior High School Sports Festival",
+          "National High School Sports Festival (Inter-High)",
+          "Official event records, school events, and more",
+        ],
+      },
+    ],
+    equipmentCategories: [
+      { category: "Camera", items: ["Nikon Z9", "Nikon Z8", "Nikon Z6"] },
+      {
+        category: "Lenses",
+        items: [
+          "Z 24-70mm f/4 S",
+          "Z 70-200mm f/2.8 VR S",
+          "Z 50mm f/1.2 S",
+          "Z 26mm f/2.8",
+          "Z TELECONVERTER TC-2.0x",
+          "AF-S Fisheye 8-15/3.5-4.5E",
+        ],
+      },
+      { category: "Vehicle", items: ["GR86"] },
+    ],
+    repTitle: "Representative",
+    aboutLabel: "ABOUT",
+    aboutTitle: "About",
+  },
+};
 
 const links = [
   { href: "https://xn--19ja1fb.xn--q9jyb4c/#home", icon: "/images/icons/ふわふわ.みんな.png" },
@@ -176,12 +233,12 @@ function SectionShell({ index, title, variants, children, className = "" }) {
   );
 }
 
-function CareerSection({ variants }) {
+function CareerSection({ variants, items }) {
   return (
     <div className="relative pl-5">
       <div className="absolute left-1 top-2 h-[calc(100%-8px)] w-px bg-white/10" />
       <motion.ul variants={variants.list} className="space-y-4">
-        {careerData.map(([t, e], i) => (
+        {items.map(([t, e], i) => (
           <motion.li key={i} variants={variants.item} className="flex flex-col gap-1 md:flex-row md:items-baseline md:gap-6">
             <span className="text-xs tracking-[0.2em] text-gray-400 md:w-24">{t}</span>
             <span className="text-base text-gray-100">{e}</span>
@@ -192,10 +249,10 @@ function CareerSection({ variants }) {
   );
 }
 
-function HistorySection({ variants }) {
+function HistorySection({ variants, groups }) {
   return (
     <motion.div variants={variants.list} className="flex flex-col">
-      {historyGroups.map((group, i) => (
+      {groups.map((group, i) => (
         <motion.div
           key={i}
           variants={variants.item}
@@ -213,10 +270,10 @@ function HistorySection({ variants }) {
   );
 }
 
-function EquipmentSection({ variants }) {
+function EquipmentSection({ variants, categories }) {
   return (
     <motion.div variants={variants.list} className="flex flex-col">
-      {equipmentCategories.map((category, i) => (
+      {categories.map((category, i) => (
         <motion.div
           key={i}
           variants={variants.item}
@@ -264,7 +321,7 @@ function LinksSection({ variants }) {
   );
 }
 
-function DesktopView() {
+function DesktopView({ copy }) {
   const [index, setIndex] = useState(0);
   const wheelLock = useRef(false);
   const reduceMotion = useReducedMotion();
@@ -272,12 +329,12 @@ function DesktopView() {
 
   const sections = useMemo(
     () => [
-      { key: "career", title: "経歴", content: <CareerSection variants={variants} /> },
-      { key: "history", title: "撮影歴", content: <HistorySection variants={variants} /> },
-      { key: "equipment", title: "所有機材", content: <EquipmentSection variants={variants} /> },
+      { key: "career", title: copy.sectionTitles[0], content: <CareerSection variants={variants} items={copy.careerData} /> },
+      { key: "history", title: copy.sectionTitles[1], content: <HistorySection variants={variants} groups={copy.historyGroups} /> },
+      { key: "equipment", title: copy.sectionTitles[2], content: <EquipmentSection variants={variants} categories={copy.equipmentCategories} /> },
       { key: "links", title: "Links", content: <LinksSection variants={variants} /> },
     ],
-    [variants]
+    [variants, copy]
   );
 
   const goNext = useCallback(
@@ -304,17 +361,17 @@ function DesktopView() {
       <motion.div initial="initial" animate="animate" className="absolute inset-x-0 top-12 z-10">
         <div className="mx-auto max-w-6xl px-6">
           <div className="flex items-center gap-4 text-gray-500">
-            <span className="text-[11px] tracking-[0.45em]">ABOUT</span>
+            <span className="text-[11px] tracking-[0.45em]">{copy.aboutLabel}</span>
             <motion.span variants={variants.rule} className="h-px w-16 origin-left bg-white/40" />
           </div>
           <motion.h1 variants={variants.title} className="mt-3 text-4xl font-semibold md:text-5xl">
-            About
+            {copy.aboutTitle}
           </motion.h1>
           <motion.p
             variants={variants.fade}
             className="mt-3 text-sm tracking-[0.2em] text-gray-400 md:text-base"
           >
-            代表　板𠩤豪士<span className="ml-2 text-gray-500">（板原豪士）</span>
+            {copy.repTitle}　板𠩤豪士<span className="ml-2 text-gray-500">（板原豪士）</span>
           </motion.p>
           <motion.p variants={variants.fade} className="mt-1 text-xs tracking-[0.35em] text-gray-500 md:text-sm">
             GOSHI ITAHARA
@@ -339,7 +396,7 @@ function DesktopView() {
       </div>
 
       <nav className="absolute right-6 top-1/2 z-10 flex -translate-y-1/2 flex-col gap-6">
-        {sectionTitles.map((title, i) => {
+        {copy.sectionTitles.map((title, i) => {
           const active = index === i;
           return (
             <button
@@ -370,13 +427,13 @@ function DesktopView() {
   );
 }
 
-function MobileView() {
+function MobileView({ copy }) {
   const reduceMotion = useReducedMotion();
   const variants = useMemo(() => createVariants(reduceMotion), [reduceMotion]);
   const sections = [
-    { key: "career", title: "経歴", content: <CareerSection variants={variants} /> },
-    { key: "history", title: "撮影歴", content: <HistorySection variants={variants} /> },
-    { key: "equipment", title: "所有機材", content: <EquipmentSection variants={variants} /> },
+    { key: "career", title: copy.sectionTitles[0], content: <CareerSection variants={variants} items={copy.careerData} /> },
+    { key: "history", title: copy.sectionTitles[1], content: <HistorySection variants={variants} groups={copy.historyGroups} /> },
+    { key: "equipment", title: copy.sectionTitles[2], content: <EquipmentSection variants={variants} categories={copy.equipmentCategories} /> },
     { key: "links", title: "Links", content: <LinksSection variants={variants} /> },
   ];
 
@@ -386,17 +443,17 @@ function MobileView() {
       <div className="relative z-10 mx-auto flex max-w-3xl flex-col gap-12 px-6 py-12">
         <motion.div initial="initial" animate="animate" className="mb-2">
           <div className="flex items-center gap-4 text-gray-500">
-            <span className="text-[11px] tracking-[0.45em]">ABOUT</span>
+            <span className="text-[11px] tracking-[0.45em]">{copy.aboutLabel}</span>
             <motion.span variants={variants.rule} className="h-px w-16 origin-left bg-white/40" />
           </div>
           <motion.h1 variants={variants.title} className="mt-3 text-4xl font-semibold md:text-5xl">
-            About
+            {copy.aboutTitle}
           </motion.h1>
           <motion.p
             variants={variants.fade}
             className="mt-3 text-sm tracking-[0.2em] text-gray-400 md:text-base"
           >
-            代表　板𠩤豪士<span className="ml-2 text-gray-500">（板原豪士）</span>
+            {copy.repTitle}　板𠩤豪士<span className="ml-2 text-gray-500">（板原豪士）</span>
           </motion.p>
           <motion.p variants={variants.fade} className="mt-1 text-xs tracking-[0.35em] text-gray-500 md:text-sm">
             GOSHI ITAHARA
@@ -423,5 +480,7 @@ function MobileView() {
 export default function AboutClient() {
   const width = useWindowSize();
   const isSP = width > 0 && width < 640;
-  return isSP ? <MobileView /> : <DesktopView />;
+  const { isEn } = useLanguage();
+  const copy = isEn ? ABOUT_COPY.en : ABOUT_COPY.ja;
+  return isSP ? <MobileView copy={copy} /> : <DesktopView copy={copy} />;
 }

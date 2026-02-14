@@ -4,20 +4,26 @@ import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useLanguage } from './components/LanguageProvider';
 
 export default function HomeClient({ slides }) {
-  const phrasesWithComma = ['感動を、', '情熱を、', '一瞬を'];
-  const phrasesWithoutComma = ['感動を', '情熱を', '一瞬を'];
+  const { isEn } = useLanguage();
+  const phrasesWithComma = isEn
+    ? ['Inspiration,', 'Passion,', 'A Moment']
+    : ['感動を、', '情熱を、', '一瞬を'];
+  const phrasesWithoutComma = isEn
+    ? ['Inspiration', 'Passion', 'A Moment']
+    : ['感動を', '情熱を', '一瞬を'];
   const [visibleCount, setVisibleCount] = useState(0);
   const [slideIndex, setSlideIndex] = useState(0);
   const primaryLinks = [
-    { href: '/photo', label: 'Photo works', image: '/photo_image.jpg' },
-    { href: '/movie', label: 'Movie works', image: '/movie-image.jpg' },
+    { href: '/photo', label: isEn ? 'Photo Works' : '写真作品', image: '/photo_image.jpg' },
+    { href: '/movie', label: isEn ? 'Movie Works' : '映像作品', image: '/movie-image.jpg' },
   ];
   const secondaryLinks = [
-    { href: '/price', label: 'Price', tag: 'PRICE', detail: '料金・プラン' },
-    { href: '/about', label: 'About', tag: 'ABOUT', detail: '経歴・所有機材' },
-    { href: '/contact', label: 'Contact', tag: 'CONTACT', detail: 'ご相談・お問い合わせ' },
+    { href: '/price', label: isEn ? 'Price' : '料金', tag: 'PRICE', detail: isEn ? 'Plans and estimates' : '料金・プラン' },
+    { href: '/about', label: isEn ? 'About' : '概要', tag: 'ABOUT', detail: isEn ? 'Profile and equipment' : '経歴・所有機材' },
+    { href: '/contact', label: isEn ? 'Contact' : 'お問い合わせ', tag: 'CONTACT', detail: isEn ? 'Inquiries and requests' : 'ご相談・お問い合わせ' },
   ];
 
   const renderPrimaryCard = ({ href, label, image }, className) => (
@@ -144,7 +150,8 @@ export default function HomeClient({ slides }) {
               className="absolute bottom-36 z-10 text-center"
             >
               <div className="text-sm tracking-[0.35em] text-gray-200 sm:text-base">
-                代表　板𠩤豪士<span className="ml-2 text-gray-400">（板原豪士）</span>
+                {isEn ? 'Representative' : '代表'}　板𠩤豪士
+                <span className="ml-2 text-gray-400">（板原豪士）</span>
               </div>
               <div className="mt-2 text-xs tracking-[0.45em] text-gray-400 sm:text-sm">GOSHI ITAHARA</div>
             </motion.div>
@@ -194,9 +201,13 @@ export default function HomeClient({ slides }) {
             <span className="text-[11px] tracking-[0.45em]">EXPLORE</span>
             <span className="h-px w-16 origin-left bg-white/30" />
           </div>
-          <h2 className="mt-4 text-4xl font-semibold md:text-5xl">More from iT4P studio</h2>
+          <h2 className="mt-4 text-4xl font-semibold md:text-5xl">
+            {isEn ? 'More from iT4P studio' : 'iT4P studio さらに見る'}
+          </h2>
           <p className="mt-3 text-sm text-gray-400 md:text-base">
-            料金やプロフィール、相談窓口をまとめてご案内します。
+            {isEn
+              ? 'Find pricing, profile, and contact details in one place.'
+              : '料金やプロフィール、相談窓口をまとめてご案内します。'}
           </p>
         </div>
         <div className="relative z-10 mx-auto max-w-6xl px-6 pb-16">

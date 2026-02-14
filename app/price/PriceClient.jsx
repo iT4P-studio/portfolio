@@ -3,27 +3,50 @@
 import React, { useMemo } from "react";
 import Link from "next/link";
 import { motion, useReducedMotion } from "framer-motion";
+import { useLanguage } from "../components/LanguageProvider";
 
-const plans = [
-  {
-    title: "写真撮影",
-    price: "¥20,000〜/day",
-    details: "スポーツ・イベント・ステージ撮影",
-    contactLink: "/contact",
-  },
-  {
-    title: "映像撮影・配信",
-    price: "¥25,000〜/day",
-    details: "学校行事・各種イベントの収録や配信",
-    contactLink: "/contact",
-  },
-  {
-    title: "映像編集",
-    price: "¥20,000〜/day",
-    details: "撮影データのカット編集、テロップやBGMの追加、After EffectsによるCG",
-    contactLink: "/contact",
-  },
-];
+const PLAN_COPY = {
+  ja: [
+    {
+      title: "写真撮影",
+      price: "¥20,000〜/day",
+      details: "スポーツ・イベント・ステージ撮影",
+      contactLink: "/contact",
+    },
+    {
+      title: "映像撮影・配信",
+      price: "¥25,000〜/day",
+      details: "学校行事・各種イベントの収録や配信",
+      contactLink: "/contact",
+    },
+    {
+      title: "映像編集",
+      price: "¥20,000〜/day",
+      details: "撮影データのカット編集、テロップやBGMの追加、After EffectsによるCG",
+      contactLink: "/contact",
+    },
+  ],
+  en: [
+    {
+      title: "Photo Shoot",
+      price: "¥20,000~/day",
+      details: "Sports, events, and stage photography",
+      contactLink: "/contact",
+    },
+    {
+      title: "Video Shoot / Streaming",
+      price: "¥25,000~/day",
+      details: "Recording and live streaming for school and events",
+      contactLink: "/contact",
+    },
+    {
+      title: "Video Editing",
+      price: "¥20,000~/day",
+      details: "Cuts, captions, BGM, and CGI with After Effects",
+      contactLink: "/contact",
+    },
+  ],
+};
 
 const createVariants = (reduceMotion) => {
   const baseEase = [0.16, 1, 0.3, 1];
@@ -87,6 +110,8 @@ function AmbientBackground() {
 export default function PriceClient() {
   const reduceMotion = useReducedMotion();
   const variants = useMemo(() => createVariants(reduceMotion), [reduceMotion]);
+  const { isEn } = useLanguage();
+  const plans = isEn ? PLAN_COPY.en : PLAN_COPY.ja;
 
   return (
     <main className="relative min-h-[calc(100vh-60px)] bg-black text-white">
@@ -98,9 +123,11 @@ export default function PriceClient() {
               <span className="text-[11px] tracking-[0.45em]">PRICE</span>
               <motion.span variants={variants.rule} className="h-px w-16 origin-left bg-white/40" />
             </div>
-            <h1 className="mt-4 text-4xl font-semibold md:text-5xl">Price</h1>
+            <h1 className="mt-4 text-4xl font-semibold md:text-5xl">{isEn ? "Price" : "料金"}</h1>
             <p className="mt-4 text-sm text-gray-300 md:text-base">
-              料金は撮影内容等によって大きく変動することがございます。ぜひ一度、お気軽にお問い合わせください。
+              {isEn
+                ? "Pricing varies depending on the content and requirements. Feel free to reach out anytime."
+                : "料金は撮影内容等によって大きく変動することがございます。ぜひ一度、お気軽にお問い合わせください。"}
             </p>
           </motion.div>
 
@@ -124,7 +151,7 @@ export default function PriceClient() {
                     href={plan.contactLink}
                     className="inline-flex items-center gap-3 self-start rounded-full border border-white/30 px-5 py-2 text-sm tracking-[0.2em] text-white transition-colors hover:border-white hover:bg-white/10"
                   >
-                    お問い合わせ
+                    {isEn ? "Contact" : "お問い合わせ"}
                     <span className="text-xs">→</span>
                   </Link>
                 </div>

@@ -2,6 +2,7 @@
 
 import React, { useMemo } from "react";
 import { motion, useReducedMotion } from "framer-motion";
+import { useLanguage } from "../components/LanguageProvider";
 
 /**
  * MovieWorksページ
@@ -12,86 +13,167 @@ import { motion, useReducedMotion } from "framer-motion";
  */
 
 export default function MovieClient() {
-  const featured = {
-    date: "2025/06/11",
-    title: "UNIKP 2025 Vol.12 関東予選",
-    embedUrl: "https://player.vimeo.com/video/1092752130?h=d5733889f3&title=0&byline=0&portrait=0",
-    caption: "2025/6/11に行われた「UNIKP 2025 Vol.12 関東予選」のダイジェスト映像です。撮影と編集を担当しています。",
-  };
+  const { isEn } = useLanguage();
+  const featured = isEn
+    ? {
+        date: "2025/06/11",
+        title: "UNIKP 2025 Vol.12 Kanto Qualifier",
+        embedUrl: "https://player.vimeo.com/video/1092752130?h=d5733889f3&title=0&byline=0&portrait=0",
+        caption: "Digest video of UNIKP 2025 Vol.12 Kanto Qualifier (2025/6/11). Filming and editing by iT4P studio.",
+      }
+    : {
+        date: "2025/06/11",
+        title: "UNIKP 2025 Vol.12 関東予選",
+        embedUrl: "https://player.vimeo.com/video/1092752130?h=d5733889f3&title=0&byline=0&portrait=0",
+        caption: "2025/6/11に行われた「UNIKP 2025 Vol.12 関東予選」のダイジェスト映像です。撮影と編集を担当しています。",
+      };
 
   // タイトル + 日付 + 埋め込み(動画/画像) + caption
-  const items = [
-    {
-      date: "2025/09/21",
-      title: "UNIDOL25夏 敗者復活戦 Digest",
-      type: "video",
-      embedUrl: "https://www.youtube.com/embed/P5tR6ST3dR4?si=3nkruc-4jUoRjokO",
-      caption: "UNIDOL25夏の敗者復活戦を撮影・収録・編集"
-    },
-    {
-      date: "2025/09/20",
-      title: "UNIDOL25夏 決勝戦 Digest",
-      type: "video",
-      embedUrl: "https://www.youtube.com/embed/pTAHd5M2i48?si=BFFTlwuUIpR2LnYV",
-      caption: "UNIDOL25夏 決勝戦映像を撮影・収録・編集"
-    },
-    {
-      date: "2025/03/19",
-      title: "ダンス公演 収録",
-      type: "image",
-      embedUrl: "/images/mw/mw2.JPG", 
-      caption: "ディレクション・撮影・SW・編集を担当"
-    },
-    {
-      date: "2025/02",
-      title: "医療関連施設 紹介動画制作",
-      type: "image",
-      embedUrl: "/images/mw/mw1.JPG", 
-      caption: "構成・撮影・音響・編集を担当"
-    },
-    {
-      date: "2024/09/14",
-      title: "アカペラ公演 配信・収録",
-      type: "image",
-      embedUrl: "/images/mw/mw3.JPG", 
-      caption: "ディレクション・撮影・SW・配信管理を担当"
-    },
-    {
-      date: "2024/08/03",
-      title: "スポーツイベント 収録",
-      type: "image",
-      embedUrl: "/images/mw/mw6.JPG", 
-      caption: "ディレクション・撮影・SWを担当"
-    },
-    {
-      date: "2024/06/06",
-      title: "スポーツイベント 収録",
-      type: "image",
-      embedUrl: "/images/mw/mw7.JPG", 
-      caption: "ディレクション・撮影・SWを担当"
-    },
-    {
-      date: "2024/03/18",
-      title: "ダンス公演 収録",
-      type: "image",
-      embedUrl: "/images/mw/mw4.JPG", 
-      caption: "ディレクション・撮影・SW・編集を担当"
-    },
-    {
-      date: "2024/01/14",
-      title: "空手道場 演武会 収録",
-      type: "image",
-      embedUrl: "/images/mw/mw5.JPG", 
-      caption: "撮影・編集を担当"
-    },
-    {
-      date: "2022/11/05",
-      title: "第49回雙峰祭ダイジェスト【筑波大学学園祭】",
-      type: "video",
-      embedUrl: "https://www.youtube.com/embed/P9fxQRrqruE?si=BnHQEcHvkJzbSXzq",
-      caption: "撮影・CG・アニメーションを担当"
-    },
-  ];
+  const items = isEn
+    ? [
+        {
+          date: "2025/09/21",
+          title: "UNIDOL 2025 Summer — Repêchage Digest",
+          type: "video",
+          embedUrl: "https://www.youtube.com/embed/P5tR6ST3dR4?si=3nkruc-4jUoRjokO",
+          caption: "Filming, recording, and editing for the UNIDOL 2025 Summer repêchage.",
+        },
+        {
+          date: "2025/09/20",
+          title: "UNIDOL 2025 Summer — Finals Digest",
+          type: "video",
+          embedUrl: "https://www.youtube.com/embed/pTAHd5M2i48?si=BFFTlwuUIpR2LnYV",
+          caption: "Filming, recording, and editing for the finals digest.",
+        },
+        {
+          date: "2025/03/19",
+          title: "Dance Performance Recording",
+          type: "image",
+          embedUrl: "/images/mw/mw2.JPG",
+          caption: "Direction, filming, switching, and editing.",
+        },
+        {
+          date: "2025/02",
+          title: "Medical Facility Intro Video",
+          type: "image",
+          embedUrl: "/images/mw/mw1.JPG",
+          caption: "Planning, filming, audio, and editing.",
+        },
+        {
+          date: "2024/09/14",
+          title: "A Cappella Concert Streaming",
+          type: "image",
+          embedUrl: "/images/mw/mw3.JPG",
+          caption: "Direction, filming, switching, and stream management.",
+        },
+        {
+          date: "2024/08/03",
+          title: "Sports Event Recording",
+          type: "image",
+          embedUrl: "/images/mw/mw6.JPG",
+          caption: "Direction, filming, and switching.",
+        },
+        {
+          date: "2024/06/06",
+          title: "Sports Event Recording",
+          type: "image",
+          embedUrl: "/images/mw/mw7.JPG",
+          caption: "Direction, filming, and switching.",
+        },
+        {
+          date: "2024/03/18",
+          title: "Dance Performance Recording",
+          type: "image",
+          embedUrl: "/images/mw/mw4.JPG",
+          caption: "Direction, filming, switching, and editing.",
+        },
+        {
+          date: "2024/01/14",
+          title: "Karate Dojo Demonstration",
+          type: "image",
+          embedUrl: "/images/mw/mw5.JPG",
+          caption: "Filming and editing.",
+        },
+        {
+          date: "2022/11/05",
+          title: "Sohosai Festival Digest (University of Tsukuba)",
+          type: "video",
+          embedUrl: "https://www.youtube.com/embed/P9fxQRrqruE?si=BnHQEcHvkJzbSXzq",
+          caption: "Filming, CG, and animation.",
+        },
+      ]
+    : [
+        {
+          date: "2025/09/21",
+          title: "UNIDOL25夏 敗者復活戦 Digest",
+          type: "video",
+          embedUrl: "https://www.youtube.com/embed/P5tR6ST3dR4?si=3nkruc-4jUoRjokO",
+          caption: "UNIDOL25夏の敗者復活戦を撮影・収録・編集",
+        },
+        {
+          date: "2025/09/20",
+          title: "UNIDOL25夏 決勝戦 Digest",
+          type: "video",
+          embedUrl: "https://www.youtube.com/embed/pTAHd5M2i48?si=BFFTlwuUIpR2LnYV",
+          caption: "UNIDOL25夏 決勝戦映像を撮影・収録・編集",
+        },
+        {
+          date: "2025/03/19",
+          title: "ダンス公演 収録",
+          type: "image",
+          embedUrl: "/images/mw/mw2.JPG",
+          caption: "ディレクション・撮影・SW・編集を担当",
+        },
+        {
+          date: "2025/02",
+          title: "医療関連施設 紹介動画制作",
+          type: "image",
+          embedUrl: "/images/mw/mw1.JPG",
+          caption: "構成・撮影・音響・編集を担当",
+        },
+        {
+          date: "2024/09/14",
+          title: "アカペラ公演 配信・収録",
+          type: "image",
+          embedUrl: "/images/mw/mw3.JPG",
+          caption: "ディレクション・撮影・SW・配信管理を担当",
+        },
+        {
+          date: "2024/08/03",
+          title: "スポーツイベント 収録",
+          type: "image",
+          embedUrl: "/images/mw/mw6.JPG",
+          caption: "ディレクション・撮影・SWを担当",
+        },
+        {
+          date: "2024/06/06",
+          title: "スポーツイベント 収録",
+          type: "image",
+          embedUrl: "/images/mw/mw7.JPG",
+          caption: "ディレクション・撮影・SWを担当",
+        },
+        {
+          date: "2024/03/18",
+          title: "ダンス公演 収録",
+          type: "image",
+          embedUrl: "/images/mw/mw4.JPG",
+          caption: "ディレクション・撮影・SW・編集を担当",
+        },
+        {
+          date: "2024/01/14",
+          title: "空手道場 演武会 収録",
+          type: "image",
+          embedUrl: "/images/mw/mw5.JPG",
+          caption: "撮影・編集を担当",
+        },
+        {
+          date: "2022/11/05",
+          title: "第49回雙峰祭ダイジェスト【筑波大学学園祭】",
+          type: "video",
+          embedUrl: "https://www.youtube.com/embed/P9fxQRrqruE?si=BnHQEcHvkJzbSXzq",
+          caption: "撮影・CG・アニメーションを担当",
+        },
+      ];
 
   const reduceMotion = useReducedMotion();
   const variants = useMemo(() => {
@@ -140,9 +222,11 @@ export default function MovieClient() {
           <span className="text-[11px] tracking-[0.45em]">MOVIE WORKS</span>
           <motion.span variants={variants.rule} className="h-px w-16 origin-left bg-white/40" />
         </div>
-        <h1 className="mt-4 text-4xl font-semibold md:text-5xl">Movie Works</h1>
+        <h1 className="mt-4 text-4xl font-semibold md:text-5xl">{isEn ? "Movie Works" : "映像作品"}</h1>
         <p className="mt-4 text-sm text-gray-300 md:text-base">
-          {"本ページではクライアント様より直接ご依頼をいただいた案件のみを掲載しております。"}
+          {isEn
+            ? "This page features projects directly commissioned by clients."
+            : "本ページではクライアント様より直接ご依頼をいただいた案件のみを掲載しております。"}
         </p>
       </motion.div>
 

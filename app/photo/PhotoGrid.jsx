@@ -4,8 +4,20 @@ import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { motion, useReducedMotion } from 'framer-motion';
 import PhotoCard from '../components/PhotoCard';
 import { EXIF_PICK_FIELDS, buildExifInfo } from './exifFormat';
+import { useLanguage } from '../components/LanguageProvider';
 
 export default function PhotoGrid({ images }) {
+  const { isEn } = useLanguage();
+  const labels = useMemo(() => ({
+    loading: isEn ? 'Loading' : '読み込み中',
+    photoWork: isEn ? 'Photo work' : '写真作品',
+    shotDate: isEn ? 'Date' : '撮影日',
+    camera: isEn ? 'Camera' : 'カメラ',
+    lens: isEn ? 'Lens' : 'レンズ',
+    ss: 'SS',
+    iso: 'ISO',
+    iris: 'IRIS',
+  }), [isEn]);
   const parseDateText = (value) => {
     if (!value) return 0;
     if (value instanceof Date) {
@@ -241,13 +253,13 @@ export default function PhotoGrid({ images }) {
   };
 
   const getAltText = (item) => {
-    if (!item) return 'Photo work';
+    if (!item) return labels.photoWork;
     if (item.isLocal) {
       const label = item.exif?.shotDate || item.src?.split('/').pop();
-      return label ? `Photo work ${label}` : 'Photo work';
+      return label ? `${labels.photoWork} ${label}` : labels.photoWork;
     }
     const label = item.publishedDate;
-    return label ? `Photo work ${label}` : 'Photo work';
+    return label ? `${labels.photoWork} ${label}` : labels.photoWork;
   };
 
   return (
@@ -324,7 +336,7 @@ export default function PhotoGrid({ images }) {
                 }`}
                 aria-hidden={modalReady}
               >
-                <div className="text-[11px] uppercase tracking-[0.45em] text-gray-200">Loading</div>
+                <div className="text-[11px] uppercase tracking-[0.45em] text-gray-200">{labels.loading}</div>
                 <div className="h-px w-28 overflow-hidden bg-white/25">
                   <div className="h-px w-1/2 bg-white/80 animate-pulse" />
                 </div>
@@ -332,12 +344,12 @@ export default function PhotoGrid({ images }) {
               {selectedExif && modalReady && (
                 <div className="pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 via-black/50 to-transparent px-4 pb-4 pt-10">
                   <div className="flex flex-wrap gap-x-4 gap-y-2 text-xs text-gray-100 leading-relaxed">
-                    {modalShotDate && <span>撮影日：{modalShotDate}</span>}
-                    {modalCamera && <span>カメラ：{modalCamera}</span>}
-                    {modalLens && <span>レンズ：{modalLens}</span>}
-                    {modalShutter && <span>SS：{modalShutter}</span>}
-                    {modalIso && <span>ISO：{modalIso}</span>}
-                    {modalIris && <span>IRIS：{modalIris}</span>}
+                    {modalShotDate && <span>{labels.shotDate}：{modalShotDate}</span>}
+                    {modalCamera && <span>{labels.camera}：{modalCamera}</span>}
+                    {modalLens && <span>{labels.lens}：{modalLens}</span>}
+                    {modalShutter && <span>{labels.ss}：{modalShutter}</span>}
+                    {modalIso && <span>{labels.iso}：{modalIso}</span>}
+                    {modalIris && <span>{labels.iris}：{modalIris}</span>}
                   </div>
                 </div>
               )}

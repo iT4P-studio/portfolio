@@ -2,6 +2,8 @@ import './globals.css'
 import React from 'react'
 import Script from 'next/script'
 import Header from './components/Header'
+import Footer from './components/Footer'
+import { LanguageProvider } from './components/LanguageProvider'
 
 const SITE_URL = 'https://it4pstudio.com'
 const SITE_NAME = 'iT4P studio'
@@ -110,18 +112,18 @@ export default function RootLayout({ children }) {
             title="Google Tag Manager"
           />
         </noscript>
-        {/* 全ページ共通のヘッダー */}
-        <Header />
+        <LanguageProvider>
+          {/* 全ページ共通のヘッダー */}
+          <Header />
 
-        {/* ページごとの内容 */}
-        <main className="flex-grow overflow-hidden">
-          {children}
-        </main>
+          {/* ページごとの内容 */}
+          <main className="flex-grow overflow-hidden">
+            {children}
+          </main>
 
-        {/* フッター */}
-        <footer className="border-t border-white/10 bg-black py-4 text-center text-gray-500">
-          © Copyright iT4P studio All rights reserved.
-        </footer>
+          {/* フッター */}
+          <Footer />
+        </LanguageProvider>
       </body>
     </html>
   )

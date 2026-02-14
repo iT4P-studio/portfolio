@@ -2,6 +2,7 @@
 
 import React, { useMemo, useState } from "react";
 import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
+import { useLanguage } from "../components/LanguageProvider";
 
 // Formspree のエンドポイント
 const FORMSPREE_ENDPOINT = "https://formspree.io/f/xvgapaag";
@@ -69,6 +70,7 @@ function AmbientBackground() {
 export default function ContactClient() {
   const reduceMotion = useReducedMotion();
   const variants = useMemo(() => createVariants(reduceMotion), [reduceMotion]);
+  const { isEn } = useLanguage();
   // フォームプレビュー状態
   const [preview, setPreview] = useState(false);
   // 入力値を管理
@@ -123,9 +125,11 @@ export default function ContactClient() {
               <span className="text-[11px] tracking-[0.45em]">CONTACT</span>
               <motion.span variants={variants.rule} className="h-px w-16 origin-left bg-white/40" />
             </div>
-            <h1 className="mt-4 text-4xl font-semibold md:text-5xl">Contact</h1>
+            <h1 className="mt-4 text-4xl font-semibold md:text-5xl">{isEn ? "Contact" : "お問い合わせ"}</h1>
             <p className="mt-4 text-sm text-gray-300 md:text-base">
-              撮影や編集のご相談、スケジュールの確認など、お気軽にご連絡ください。
+              {isEn
+                ? "For bookings, editing, and schedule inquiries, feel free to contact me."
+                : "撮影や編集のご相談、スケジュールの確認など、お気軽にご連絡ください。"}
             </p>
 
             <AnimatePresence mode="wait">
@@ -138,7 +142,7 @@ export default function ContactClient() {
                   exit="exit"
                   className="mt-6 text-sm text-emerald-300"
                 >
-                  送信しました。ありがとうございました！
+                  {isEn ? "Sent successfully. Thank you!" : "送信しました。ありがとうございました！"}
                 </motion.p>
               )}
               {status.sent && status.error && (
@@ -150,7 +154,7 @@ export default function ContactClient() {
                   exit="exit"
                   className="mt-6 text-sm text-rose-300"
                 >
-                  送信に失敗しました。時間をおいて再度お試しください。
+                  {isEn ? "Failed to send. Please try again later." : "送信に失敗しました。時間をおいて再度お試しください。"}
                 </motion.p>
               )}
             </AnimatePresence>
@@ -168,24 +172,24 @@ export default function ContactClient() {
                   className="space-y-4 text-sm text-gray-100"
                 >
                   <div className="text-xs tracking-[0.35em] text-gray-400">PREVIEW</div>
-                  <h2 className="text-xl font-semibold text-white">内容確認</h2>
-                  <div><span className="text-gray-400">お名前：</span>{formValues.name}</div>
-                  <div><span className="text-gray-400">メールアドレス：</span>{formValues.email}</div>
-                  <div className="text-gray-400">お問い合わせ内容：</div>
+                  <h2 className="text-xl font-semibold text-white">{isEn ? "Review" : "内容確認"}</h2>
+                  <div><span className="text-gray-400">{isEn ? "Name: " : "お名前："}</span>{formValues.name}</div>
+                  <div><span className="text-gray-400">{isEn ? "Email: " : "メールアドレス："}</span>{formValues.email}</div>
+                  <div className="text-gray-400">{isEn ? "Message:" : "お問い合わせ内容："}</div>
                   <p className="whitespace-pre-wrap text-gray-100">{formValues.message}</p>
                   <div className="flex gap-3 pt-2">
                     <button
                       onClick={handleBack}
                       className="rounded-full border border-white/20 px-5 py-2 text-sm text-white transition-colors hover:border-white/60 hover:bg-white/10"
                     >
-                      戻る
+                      {isEn ? "Back" : "戻る"}
                     </button>
                     <button
                       onClick={handleSubmit}
                       className="rounded-full bg-white px-5 py-2 text-sm text-black transition-colors hover:bg-gray-200"
                       disabled={status.sent && status.ok}
                     >
-                      送信
+                      {isEn ? "Send" : "送信"}
                     </button>
                   </div>
                 </motion.div>
@@ -203,7 +207,7 @@ export default function ContactClient() {
                   <input type="text" name="company" className="hidden" tabIndex="-1" autoComplete="off" />
 
                   <label className="block">
-                    <span className="mb-2 block text-xs tracking-[0.25em] text-gray-400">お名前</span>
+                    <span className="mb-2 block text-xs tracking-[0.25em] text-gray-400">{isEn ? "NAME" : "お名前"}</span>
                     <input
                       name="name"
                       value={formValues.name}
@@ -214,7 +218,7 @@ export default function ContactClient() {
                   </label>
 
                   <label className="block">
-                    <span className="mb-2 block text-xs tracking-[0.25em] text-gray-400">メールアドレス</span>
+                    <span className="mb-2 block text-xs tracking-[0.25em] text-gray-400">{isEn ? "EMAIL" : "メールアドレス"}</span>
                     <input
                       type="email"
                       name="email"
@@ -226,7 +230,7 @@ export default function ContactClient() {
                   </label>
 
                   <label className="block">
-                    <span className="mb-2 block text-xs tracking-[0.25em] text-gray-400">お問い合わせ内容</span>
+                    <span className="mb-2 block text-xs tracking-[0.25em] text-gray-400">{isEn ? "MESSAGE" : "お問い合わせ内容"}</span>
                     <textarea
                       rows={6}
                       name="message"
@@ -242,7 +246,7 @@ export default function ContactClient() {
                     className="rounded-full border border-white/30 px-5 py-2 text-sm text-white transition-colors hover:border-white hover:bg-white/10"
                     disabled={status.sent && status.ok}
                   >
-                    内容確認
+                    {isEn ? "Preview" : "内容確認"}
                   </button>
                 </motion.form>
               )}
