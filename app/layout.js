@@ -8,6 +8,7 @@ const SITE_NAME = 'iT4P studio'
 const REP_NAME = '板𠩤豪士'
 const REP_NAME_ALT = '板原豪士'
 const REP_NAME_ROMAN = 'GOSHI ITAHARA'
+const SITE_NAME_WITH_REP = `${REP_NAME_ALT}｜${SITE_NAME}`
 const DEFAULT_DESCRIPTION = 'スポーツ・イベント・ステージ撮影から映像制作まで対応するフォト/ムービースタジオ。'
 const GTM_ID = 'GTM-K3GC8P7R'
 const GA_MEASUREMENT_ID = 'G-GVJZVJ676G'
@@ -15,7 +16,7 @@ const GA_MEASUREMENT_ID = 'G-GVJZVJ676G'
 export const metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: SITE_NAME,
+    default: SITE_NAME_WITH_REP,
     template: `%s | ${SITE_NAME}`,
   },
   description: DEFAULT_DESCRIPTION,
@@ -23,7 +24,7 @@ export const metadata = {
     title: SITE_NAME,
     description: DEFAULT_DESCRIPTION,
     url: SITE_URL,
-    siteName: SITE_NAME,
+    siteName: SITE_NAME_WITH_REP,
     type: 'website',
     images: [
       {
@@ -79,7 +80,8 @@ export default function RootLayout({ children }) {
       },
       {
         '@type': 'WebSite',
-        name: SITE_NAME,
+        name: SITE_NAME_WITH_REP,
+        alternateName: [SITE_NAME, REP_NAME_ALT, REP_NAME_ROMAN],
         url: SITE_URL,
       },
     ],
