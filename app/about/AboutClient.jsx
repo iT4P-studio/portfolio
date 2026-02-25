@@ -118,6 +118,7 @@ const links = [
   { href: "https://raspi0124.dev/", icon: "/images/icons/raspi0124.dev.png" },
   { href: "https://www.uekann.com/", icon: "/images/icons/uekann.com.png" },
   { href: "https://www.ultrabumbuku.dev/", icon: "/images/icons/ultrabumbuku.dev.png" },
+  { href: "https://tsukubanyan.racing/", icon: "/images/icons/tsukubanyan.racing.png" },
   { href: "https://momee.mt/", icon: "/images/icons/momee.mt.svg" },
 ];
 
@@ -210,6 +211,32 @@ function AmbientBackground() {
         animate={{ opacity: [0.15, 0.35, 0.15], scale: [1, 1.05, 1] }}
         transition={{ duration: 12, repeat: Infinity, ease: "easeInOut" }}
       />
+    </div>
+  );
+}
+
+function ProfileBackdrop({
+  className = "",
+  imageClassName = "opacity-15",
+  sizeClassName = "h-[38vw] w-[38vw] min-h-[220px] min-w-[220px] max-h-[420px] max-w-[420px]",
+  frameClassName = "overflow-hidden",
+}) {
+  const maskStyle = {
+    WebkitMaskImage: "radial-gradient(circle, rgba(0,0,0,1) 62%, rgba(0,0,0,0) 100%)",
+    maskImage: "radial-gradient(circle, rgba(0,0,0,1) 62%, rgba(0,0,0,0) 100%)",
+  };
+  return (
+    <div className={`pointer-events-none absolute right-0 top-1/2 z-0 -translate-y-1/2 ${className}`}>
+      <div className={`relative ${sizeClassName} ${imageClassName} ${frameClassName}`} style={maskStyle}>
+        <Image
+          src="/icons/Z6ii_260212_1.jpg"
+          alt="Profile"
+          fill
+          sizes="(max-width: 640px) 60vw, 38vw"
+          className="object-cover shadow-[0_0_80px_rgba(255,255,255,0.08)]"
+          priority={false}
+        />
+      </div>
     </div>
   );
 }
@@ -358,6 +385,11 @@ function DesktopView({ copy }) {
   return (
     <main className="relative min-h-[calc(100vh-60px)] bg-black text-white">
       <AmbientBackground />
+      <ProfileBackdrop
+        className="hidden md:block right-24"
+        imageClassName="opacity-[0.22]"
+        frameClassName="overflow-hidden"
+      />
       <motion.div initial="initial" animate="animate" className="absolute inset-x-0 top-12 z-10">
         <div className="mx-auto max-w-6xl px-6">
           <div className="flex items-center gap-4 text-gray-500">
@@ -440,6 +472,12 @@ function MobileView({ copy }) {
   return (
     <main className="relative bg-black text-white">
       <AmbientBackground />
+      <ProfileBackdrop
+        className="right-6 top-28"
+        imageClassName="opacity-[0.16]"
+        sizeClassName="h-[60vw] w-[60vw] min-h-[160px] min-w-[160px] max-h-[260px] max-w-[260px]"
+        frameClassName="overflow-hidden"
+      />
       <div className="relative z-10 mx-auto flex max-w-3xl flex-col gap-12 px-6 py-12">
         <motion.div initial="initial" animate="animate" className="mb-2">
           <div className="flex items-center gap-4 text-gray-500">
